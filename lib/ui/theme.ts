@@ -27,6 +27,11 @@ export async function setTheme(overrides: ThemeOverrides): Promise<Theme> {
   return mergeTheme(merged);
 }
 
+export async function resetTheme(): Promise<Theme> {
+  await storage.removeItem(THEME_KEY);
+  return DEFAULT_THEME;
+}
+
 function toCSSVars(tokens: Partial<ThemeColors> & { radius?: string }): string {
   return Object.entries(tokens)
     .map(([key, value]) => `  --${key}: ${value};`)
