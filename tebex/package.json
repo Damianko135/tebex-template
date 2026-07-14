@@ -1,0 +1,24 @@
+{
+  "name": "tebex-headless",
+  "version": "1.0.0",
+  "private": true,
+  "description": "TypeScript client generated from Tebex's Headless API OpenAPI schema.",
+  "main": "src/index.ts",
+  "scripts": {
+    "fetch-schema": "tsx scripts/update-api.ts",
+    "generate": "openapi-typescript openapi.yaml -o src/api/schema.d.ts",
+    "update": "pnpm run fetch-schema && pnpm run generate"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "devDependencies": {
+    "@types/node": "^20",
+    "openapi-typescript": "^7.13.0",
+    "tsx": "^4.19.2"
+  },
+  "dependencies": {
+    "openapi-fetch": "^0.17.0"
+  }
+}
