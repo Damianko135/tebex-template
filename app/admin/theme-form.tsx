@@ -1,6 +1,8 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect, useState } from "react";
+import { ColorPicker, ColorService, type IColor } from "react-color-palette";
+import "react-color-palette/css";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
@@ -16,6 +18,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { Theme } from "@/lib/ui/tokens";
@@ -24,6 +27,15 @@ import { initialThemeFormState, resetThemeAction, updateThemeAction } from "./ac
 import { THEME_TOKEN_FIELDS, THEME_TOKEN_GROUPS, type ThemeTokenField } from "./theme-fields";
 
 const THEME_FORM_ID = "theme-form";
+
+// react-color-palette's ColorService always touches `document` (canvas-based
+// color parsing), so it can't run during the server render pass. Seed with a
+// neutral placeholder and resolve the real color client-side after mount.
+const PLACEHOLDER_COLOR: IColor = {
+  hex: "#000000",
+  rgb: { r: 0, g: 0, b: 0, a: 1 },
+  hsv: { h: 0, s: 0, v: 0, a: 1 },
+};
 
 function ColorField({
   mode,
@@ -35,16 +47,45 @@ function ColorField({
   defaultValue: string;
 }) {
   const name = `${mode}.${field.key}`;
+  const [value, setValue] = useState(defaultValue);
+  const [color, setColor] = useState<IColor>(PLACEHOLDER_COLOR);
+
+  useEffect(() => {
+    setColor(ColorService.convert("hex", defaultValue));
+  }, [defaultValue]);
+
+  function handlePickerChange(next: IColor) {
+    setColor(next);
+    setValue(next.hex);
+  }
+
+  function handleTextChange(next: string) {
+    setValue(next);
+    setColor(ColorService.convert("hex", next));
+  }
+
   return (
     <div className="flex items-center gap-2">
-      <span
-        aria-hidden
-        className="size-8 shrink-0 rounded-md border border-border"
-        style={{ background: defaultValue }}
-      />
+      <Popover>
+        <PopoverTrigger
+          type="button"
+          aria-label={`Pick a color for ${field.label}`}
+          className="size-8 shrink-0 rounded-md border border-border"
+          style={{ background: value }}
+        />
+        <PopoverContent className="w-auto p-3">
+          <ColorPicker height={140} color={color} onChange={handlePickerChange} />
+        </PopoverContent>
+      </Popover>
       <div className="flex-1 space-y-1">
         <Label htmlFor={name}>{field.label}</Label>
-        <Input id={name} name={name} defaultValue={defaultValue} spellCheck={false} />
+        <Input
+          id={name}
+          name={name}
+          value={value}
+          onChange={(event) => handleTextChange(event.target.value)}
+          spellCheck={false}
+        />
       </div>
     </div>
   );
