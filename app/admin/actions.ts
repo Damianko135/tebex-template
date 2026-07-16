@@ -4,14 +4,8 @@ import { revalidatePath } from "next/cache";
 
 import { resetTheme, setTheme } from "@/lib/ui/theme";
 import type { ThemeOverrides } from "@/lib/ui/tokens";
+import type { ThemeFormState } from "./theme-form-state";
 import { THEME_TOKEN_FIELDS } from "./theme-fields";
-
-export interface ThemeFormState {
-  status: "idle" | "success" | "error";
-  message?: string;
-}
-
-const idleState: ThemeFormState = { status: "idle" };
 
 export async function updateThemeAction(
   _prevState: ThemeFormState,
@@ -60,5 +54,3 @@ export async function resetThemeAction(
   revalidatePath("/", "layout");
   return { status: "success", message: "Theme reset to defaults." };
 }
-
-export { idleState as initialThemeFormState };

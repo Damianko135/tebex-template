@@ -1,5 +1,6 @@
 import { storage } from "@/lib/storage/storage";
-import { DEFAULT_THEME, type Theme, type ThemeColors, type ThemeOverrides } from "./tokens";
+import { themeToCSS } from "./theme-css";
+import { DEFAULT_THEME, type Theme, type ThemeOverrides } from "./tokens";
 
 const THEME_KEY = "theme:active";
 
@@ -32,16 +33,6 @@ export async function resetTheme(): Promise<Theme> {
   return DEFAULT_THEME;
 }
 
-function toCSSVars(tokens: Partial<ThemeColors> & { radius?: string }): string {
-  return Object.entries(tokens)
-    .map(([key, value]) => `  --${key}: ${value};`)
-    .join("\n");
-}
-
 export async function getThemeStyle(): Promise<string> {
-  const theme = await getTheme();
-  return [
-    `:root {\n${toCSSVars({ ...theme.light, radius: theme.radius })}\n}`,
-    `.dark {\n${toCSSVars(theme.dark)}\n}`,
-  ].join("\n\n");
+  return themeToCSS(await getTheme());
 }
