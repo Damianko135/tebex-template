@@ -22,10 +22,10 @@ import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import type { Theme, ThemeColors } from "@/lib/ui/tokens";
+import { initialActionState } from "@/lib/action-state";
 
 import { resetThemeAction, updateThemeAction } from "./actions";
 import { THEME_TOKEN_FIELDS, THEME_TOKEN_GROUPS, type ThemeTokenField } from "./theme-fields";
-import { initialThemeFormState } from "./theme-form-state";
 
 const THEME_FORM_ID = "theme-form";
 
@@ -263,11 +263,11 @@ export function ThemeForm({
 }) {
   const [saveState, saveAction, isSaving] = useActionState(
     updateThemeAction,
-    initialThemeFormState
+    initialActionState
   );
   const [resetState, resetAction, isResetting] = useActionState(
     resetThemeAction,
-    initialThemeFormState
+    initialActionState
   );
 
   const [draft, setDraft] = useState<Theme>(theme);

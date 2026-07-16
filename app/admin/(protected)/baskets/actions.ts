@@ -6,11 +6,7 @@ import { createBasket } from "@/lib/tebex/mutations";
 import { getBasket } from "@/lib/tebex/queries";
 
 import { type ActionState } from "@/lib/action-state";
-
-function stringField(formData: FormData, key: string): string | undefined {
-  const value = formData.get(key);
-  return typeof value === "string" && value.trim() ? value.trim() : undefined;
-}
+import { stringField } from "@/lib/form-data";
 
 export async function createBasketAction(
   _prevState: ActionState,

@@ -22,6 +22,10 @@ export default async function CategoryDetailPage({
   if (!category) notFound();
 
   const allCategories = allResult.ok ? (allResult.data.data ?? []) : [];
+  // The schema declares `parent` as an empty `Record<string, never>` (same
+  // underspecified-object issue as `Package.options`/`variables` elsewhere in
+  // this codebase), so this narrows it to the shape the live API actually
+  // returns.
   const subcategories = allCategories.filter(
     (candidate) => (candidate.parent as { id?: number } | null)?.id === category.id
   );

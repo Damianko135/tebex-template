@@ -4,13 +4,13 @@ import { revalidatePath } from "next/cache";
 
 import { resetTheme, setTheme } from "@/lib/ui/theme";
 import type { ThemeOverrides } from "@/lib/ui/tokens";
-import type { ThemeFormState } from "./theme-form-state";
+import type { ActionState } from "@/lib/action-state";
 import { THEME_TOKEN_FIELDS } from "./theme-fields";
 
 export async function updateThemeAction(
-  _prevState: ThemeFormState,
+  _prevState: ActionState,
   formData: FormData
-): Promise<ThemeFormState> {
+): Promise<ActionState> {
   try {
     const light: Record<string, string> = {};
     const dark: Record<string, string> = {};
@@ -47,9 +47,9 @@ export async function updateThemeAction(
 }
 
 export async function resetThemeAction(
-  _prevState: ThemeFormState,
+  _prevState: ActionState,
   _formData: FormData
-): Promise<ThemeFormState> {
+): Promise<ActionState> {
   await resetTheme();
   revalidatePath("/", "layout");
   return { status: "success", message: "Theme reset to defaults." };

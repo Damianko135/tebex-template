@@ -15,14 +15,10 @@ import {
 } from "@/lib/tebex/mutations";
 import { getBasketAuthUrls } from "@/lib/tebex/queries";
 import type { ActionState } from "@/lib/action-state";
+import { stringField } from "@/lib/form-data";
 import { getSiteOrigin } from "@/lib/site";
 
 import { getOrCreateBasketIdent } from "./basket";
-
-function stringField(formData: FormData, key: string): string | undefined {
-  const value = formData.get(key);
-  return typeof value === "string" && value.trim() ? value.trim() : undefined;
-}
 
 function revalidateBasket() {
   revalidatePath("/basket");

@@ -16,14 +16,7 @@ import {
 import { getBasketAuthUrls } from "@/lib/tebex/queries";
 
 import { type ActionState } from "@/lib/action-state";
-
-function requireString(formData: FormData, key: string): string {
-  const value = formData.get(key);
-  if (typeof value !== "string" || !value.trim()) {
-    throw new Error(`Missing required field: ${key}`);
-  }
-  return value.trim();
-}
+import { stringField } from "@/lib/form-data";
 
 function revalidateBasket(basketIdent: string) {
   revalidatePath(`/admin/baskets/${basketIdent}`);
@@ -33,8 +26,9 @@ export async function applyCouponAction(
   _prev: ActionState,
   formData: FormData
 ): Promise<ActionState> {
-  const basketIdent = requireString(formData, "basketIdent");
-  const couponCode = requireString(formData, "coupon_code");
+  const basketIdent = stringField(formData, "basketIdent");
+  const couponCode = stringField(formData, "coupon_code");
+  if (!basketIdent || !couponCode) return { status: "error", message: "Enter a coupon code." };
   const result = await applyCoupon(basketIdent, couponCode);
   if (!result.ok) return { status: "error", message: result.error.message };
   revalidateBasket(basketIdent);
@@ -45,8 +39,9 @@ export async function removeCouponAction(
   _prev: ActionState,
   formData: FormData
 ): Promise<ActionState> {
-  const basketIdent = requireString(formData, "basketIdent");
-  const couponCode = requireString(formData, "coupon_code");
+  const basketIdent = stringField(formData, "basketIdent");
+  const couponCode = stringField(formData, "coupon_code");
+  if (!basketIdent || !couponCode) return { status: "error", message: "Missing coupon." };
   const result = await removeCoupon(basketIdent, couponCode);
   if (!result.ok) return { status: "error", message: result.error.message };
   revalidateBasket(basketIdent);
@@ -57,8 +52,9 @@ export async function applyGiftCardAction(
   _prev: ActionState,
   formData: FormData
 ): Promise<ActionState> {
-  const basketIdent = requireString(formData, "basketIdent");
-  const cardNumber = requireString(formData, "card_number");
+  const basketIdent = stringField(formData, "basketIdent");
+  const cardNumber = stringField(formData, "card_number");
+  if (!basketIdent || !cardNumber) return { status: "error", message: "Enter a gift card number." };
   const result = await applyGiftCard(basketIdent, cardNumber);
   if (!result.ok) return { status: "error", message: result.error.message };
   revalidateBasket(basketIdent);
@@ -69,8 +65,9 @@ export async function removeGiftCardAction(
   _prev: ActionState,
   formData: FormData
 ): Promise<ActionState> {
-  const basketIdent = requireString(formData, "basketIdent");
-  const cardNumber = requireString(formData, "card_number");
+  const basketIdent = stringField(formData, "basketIdent");
+  const cardNumber = stringField(formData, "card_number");
+  if (!basketIdent || !cardNumber) return { status: "error", message: "Missing gift card." };
   const result = await removeGiftCard(basketIdent, cardNumber);
   if (!result.ok) return { status: "error", message: result.error.message };
   revalidateBasket(basketIdent);
@@ -81,8 +78,9 @@ export async function applyCreatorCodeAction(
   _prev: ActionState,
   formData: FormData
 ): Promise<ActionState> {
-  const basketIdent = requireString(formData, "basketIdent");
-  const creatorCode = requireString(formData, "creator_code");
+  const basketIdent = stringField(formData, "basketIdent");
+  const creatorCode = stringField(formData, "creator_code");
+  if (!basketIdent || !creatorCode) return { status: "error", message: "Enter a creator code." };
   const result = await applyCreatorCode(basketIdent, creatorCode);
   if (!result.ok) return { status: "error", message: result.error.message };
   revalidateBasket(basketIdent);
@@ -93,7 +91,8 @@ export async function removeCreatorCodeAction(
   _prev: ActionState,
   formData: FormData
 ): Promise<ActionState> {
-  const basketIdent = requireString(formData, "basketIdent");
+  const basketIdent = stringField(formData, "basketIdent");
+  if (!basketIdent) return { status: "error", message: "Missing basket." };
   const result = await removeCreatorCode(basketIdent);
   if (!result.ok) return { status: "error", message: result.error.message };
   revalidateBasket(basketIdent);
@@ -104,8 +103,9 @@ export async function addPackageAction(
   _prev: ActionState,
   formData: FormData
 ): Promise<ActionState> {
-  const basketIdent = requireString(formData, "basketIdent");
-  const packageId = requireString(formData, "package_id");
+  const basketIdent = stringField(formData, "basketIdent");
+  const packageId = stringField(formData, "package_id");
+  if (!basketIdent || !packageId) return { status: "error", message: "Missing basket or package." };
   const quantity = Number(formData.get("quantity") ?? 1) || 1;
   const dynamic = formData.get("dynamic") === "on";
   const result = await addBasketPackage(basketIdent, packageId, quantity, dynamic);
@@ -118,8 +118,9 @@ export async function removePackageAction(
   _prev: ActionState,
   formData: FormData
 ): Promise<ActionState> {
-  const basketIdent = requireString(formData, "basketIdent");
-  const packageId = requireString(formData, "package_id");
+  const basketIdent = stringField(formData, "basketIdent");
+  const packageId = stringField(formData, "package_id");
+  if (!basketIdent || !packageId) return { status: "error", message: "Missing basket or package." };
   const result = await removeBasketPackage(basketIdent, packageId);
   if (!result.ok) return { status: "error", message: result.error.message };
   revalidateBasket(basketIdent);
@@ -130,8 +131,9 @@ export async function updateQuantityAction(
   _prev: ActionState,
   formData: FormData
 ): Promise<ActionState> {
-  const basketIdent = requireString(formData, "basketIdent");
-  const packageId = requireString(formData, "package_id");
+  const basketIdent = stringField(formData, "basketIdent");
+  const packageId = stringField(formData, "package_id");
+  if (!basketIdent || !packageId) return { status: "error", message: "Missing basket or package." };
   const quantity = Number(formData.get("quantity") ?? 1) || 1;
   const result = await updateBasketPackageQuantity(basketIdent, packageId, quantity);
   if (!result.ok) return { status: "error", message: result.error.message };
@@ -143,8 +145,9 @@ export async function getAuthUrlsAction(
   _prev: ActionState,
   formData: FormData
 ): Promise<ActionState> {
-  const basketIdent = requireString(formData, "basketIdent");
-  const returnUrl = requireString(formData, "returnUrl");
+  const basketIdent = stringField(formData, "basketIdent");
+  const returnUrl = stringField(formData, "returnUrl");
+  if (!basketIdent || !returnUrl) return { status: "error", message: "Missing basket or return URL." };
   const result = await getBasketAuthUrls(basketIdent, returnUrl);
   if (!result.ok) return { status: "error", message: result.error.message };
   return { status: "success", data: result.data };

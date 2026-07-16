@@ -44,6 +44,20 @@ export type ThemeOverrides = Partial<{
   dark: Partial<ThemeColors>;
 }>;
 
+// Theme values are admin-entered free text that gets injected verbatim as
+// CSS custom-property values into a raw <style> tag served in every page's
+// <head> (see lib/ui/theme-css.ts, app/layout.tsx) - not HTML, so it isn't a
+// candidate for HTML sanitization. This allowlist blocks characters that
+// could terminate the property declaration or the surrounding <style>
+// element (";", "<", ">", quotes, braces) while still permitting every
+// legitimate CSS color notation (hex, rgb()/oklch()/etc, keywords, percent,
+// alpha slashes) and length values like "0.625rem".
+const SAFE_CSS_VALUE_RE = /^[\w#().,%\s/-]{1,64}$/;
+
+export function isSafeThemeValue(value: string): boolean {
+  return SAFE_CSS_VALUE_RE.test(value);
+}
+
 export const DEFAULT_THEME: Theme = {
   radius: "0.625rem",
   light: {
