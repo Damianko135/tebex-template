@@ -1,7 +1,8 @@
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import type { components } from "tebex-headless";
 
-import { ProgressBar } from "@/components/progress-bar";
+import { Card, CardAction, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
 import { formatCurrency, formatNumber } from "@/lib/format";
 
 import { JSONViewer } from "./json-viewer";
@@ -16,6 +17,12 @@ interface ModuleEnvelope {
   data?: unknown;
 }
 
+const STRIPE_STYLE: CSSProperties = {
+  backgroundImage:
+    "linear-gradient(45deg, rgba(255,255,255,.15) 25%, transparent 25%, transparent 50%, rgba(255,255,255,.15) 50%, rgba(255,255,255,.15) 75%, transparent 75%, transparent)",
+  backgroundSize: "1rem 1rem",
+};
+
 function ModuleShell({
   header,
   typeLabel,
@@ -26,18 +33,24 @@ function ModuleShell({
   children: ReactNode;
 }) {
   return (
-    <div className="space-y-3 rounded-lg border border-border p-4">
-      <div className="flex items-center justify-between gap-2">
-        <h3 className="text-sm font-semibold">{header}</h3>
-        <EnumBadge value={typeLabel} />
-      </div>
-      {children}
-    </div>
+    <Card size="sm">
+      <CardHeader>
+        <CardTitle>{header}</CardTitle>
+        <CardAction>
+          <EnumBadge value={typeLabel} />
+        </CardAction>
+      </CardHeader>
+      <CardContent className="space-y-3">{children}</CardContent>
+    </Card>
   );
 }
 
 export function SidebarModuleCard({ module }: { module: ModuleEnvelope }) {
-  switch (module.type) {
+  // The schema doesn't mark `data` nullable, but the live API can return it
+  // as null for a module with nothing to show yet (e.g. no top customer
+  // recorded). Route those through the "unrecognized" diagnostic view below
+  // instead of crashing on `data.header`.
+  switch (module.data ? module.type : undefined) {
     case "top_customer": {
       const data = module.data as components["schemas"]["TopCustomerData"];
       return (
@@ -138,7 +151,10 @@ export function SidebarModuleCard({ module }: { module: ModuleEnvelope }) {
       const data = module.data as components["schemas"]["PaymentGoalData"];
       return (
         <ModuleShell header={data.header} typeLabel="Payment goal">
-          <ProgressBar percentage={data.percentage} animated={data.bar_animated} />
+          <Progress
+            value={data.percentage}
+            indicatorStyle={data.bar_animated ? STRIPE_STYLE : undefined}
+          />
           <p className="text-xs text-muted-foreground">
             {data.total != null && data.target != null
               ? `${formatCurrency(data.total)} of ${formatCurrency(data.target)}`
@@ -152,7 +168,10 @@ export function SidebarModuleCard({ module }: { module: ModuleEnvelope }) {
       const data = module.data as components["schemas"]["CommunityGoalData"];
       return (
         <ModuleShell header={data.header} typeLabel="Community goal">
-          <ProgressBar percentage={data.percentage} animated={data.bar_animated} />
+          <Progress
+            value={data.percentage}
+            indicatorStyle={data.bar_animated ? STRIPE_STYLE : undefined}
+          />
           <p className="text-xs text-muted-foreground">
             {data.total_payments != null && data.target != null
               ? `${formatNumber(data.total_payments)} of ${formatNumber(data.target)}`

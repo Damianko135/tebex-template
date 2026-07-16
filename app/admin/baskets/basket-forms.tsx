@@ -2,7 +2,7 @@
 
 import { useActionState } from "react";
 
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { ActionFeedback } from "@/components/action-feedback";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -11,20 +11,6 @@ import { Textarea } from "@/components/ui/textarea";
 
 import { initialActionState } from "@/lib/action-state";
 import { createBasketAction, lookupBasketAction } from "./actions";
-
-function ActionFeedback({
-  state,
-}: {
-  state: { status: "idle" | "success" | "error"; message?: string };
-}) {
-  if (state.status === "idle") return null;
-  return (
-    <Alert variant={state.status === "error" ? "destructive" : "default"}>
-      <AlertTitle>{state.status === "error" ? "Something went wrong" : "Success"}</AlertTitle>
-      {state.message && <AlertDescription>{state.message}</AlertDescription>}
-    </Alert>
-  );
-}
 
 export function CreateBasketForm() {
   const [state, action, isPending] = useActionState(createBasketAction, initialActionState);

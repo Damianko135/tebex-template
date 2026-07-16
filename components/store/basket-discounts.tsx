@@ -4,6 +4,7 @@ import { useActionState } from "react";
 import { X } from "lucide-react";
 import type { components } from "tebex-headless";
 
+import { ActionFeedback } from "@/components/action-feedback";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,8 +23,7 @@ type Coupon = components["schemas"]["Coupon"];
 type GiftCard = components["schemas"]["GiftCard"];
 
 function Feedback({ state }: { state: { status: "idle" | "success" | "error"; message?: string } }) {
-  if (state.status !== "error") return null;
-  return <p className="text-xs text-destructive">{state.message}</p>;
+  return <ActionFeedback state={state} variant="inline" />;
 }
 
 export function BasketDiscounts({

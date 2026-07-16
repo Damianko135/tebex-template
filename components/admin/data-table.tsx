@@ -6,6 +6,13 @@ import { ArrowDown, ArrowUp, ArrowUpDown, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
+import {
   Table,
   TableBody,
   TableCell,
@@ -172,29 +179,37 @@ export function DataTable<T>({
                   </Button>
                 ))}
               </div>
-              <div className="flex items-center gap-2">
-                <Button
-                  type="button"
-                  size="sm"
-                  variant="outline"
-                  disabled={currentPage === 0}
-                  onClick={() => setPage((p) => Math.max(0, p - 1))}
-                >
-                  Previous
-                </Button>
-                <span>
-                  Page {currentPage + 1} of {pageCount}
-                </span>
-                <Button
-                  type="button"
-                  size="sm"
-                  variant="outline"
-                  disabled={currentPage >= pageCount - 1}
-                  onClick={() => setPage((p) => Math.min(pageCount - 1, p + 1))}
-                >
-                  Next
-                </Button>
-              </div>
+              <Pagination className="mx-0 w-auto">
+                <PaginationContent>
+                  <PaginationItem>
+                    <PaginationPrevious
+                      href="#"
+                      className={cn(currentPage === 0 && "pointer-events-none opacity-50")}
+                      aria-disabled={currentPage === 0}
+                      onClick={(event) => {
+                        event.preventDefault();
+                        setPage((p) => Math.max(0, p - 1));
+                      }}
+                    />
+                  </PaginationItem>
+                  <PaginationItem>
+                    <span className="px-2 whitespace-nowrap">
+                      Page {currentPage + 1} of {pageCount}
+                    </span>
+                  </PaginationItem>
+                  <PaginationItem>
+                    <PaginationNext
+                      href="#"
+                      className={cn(currentPage >= pageCount - 1 && "pointer-events-none opacity-50")}
+                      aria-disabled={currentPage >= pageCount - 1}
+                      onClick={(event) => {
+                        event.preventDefault();
+                        setPage((p) => Math.min(pageCount - 1, p + 1));
+                      }}
+                    />
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
             </div>
           </div>
         </>

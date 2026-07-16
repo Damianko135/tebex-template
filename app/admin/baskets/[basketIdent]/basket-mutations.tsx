@@ -4,7 +4,7 @@ import { useActionState } from "react";
 import { Plus, X } from "lucide-react";
 import type { components } from "tebex-headless";
 
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { ActionFeedback } from "@/components/action-feedback";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -28,13 +28,7 @@ type Coupon = components["schemas"]["Coupon"];
 type GiftCard = components["schemas"]["GiftCard"];
 
 function Feedback({ state }: { state: { status: "idle" | "success" | "error"; message?: string } }) {
-  if (state.status === "idle") return null;
-  return (
-    <Alert variant={state.status === "error" ? "destructive" : "default"} className="mb-3">
-      <AlertTitle>{state.status === "error" ? "Failed" : "Done"}</AlertTitle>
-      {state.message && <AlertDescription>{state.message}</AlertDescription>}
-    </Alert>
-  );
+  return <ActionFeedback state={state} className="mb-3" successTitle="Done" errorTitle="Failed" />;
 }
 
 function HiddenBasketIdent({ basketIdent }: { basketIdent: string }) {

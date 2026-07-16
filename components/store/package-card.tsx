@@ -4,6 +4,7 @@ import { ImageOff } from "lucide-react";
 import type { components } from "tebex-headless";
 
 import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
 import { formatCurrency } from "@/lib/format";
 
 import { AddToBasketForm } from "./add-to-basket-form";
@@ -14,7 +15,7 @@ export function PackageCard({ pkg }: { pkg: Package }) {
   const hasDiscount = Boolean(pkg.discount && pkg.discount > 0);
 
   return (
-    <div className="group flex flex-col overflow-hidden rounded-xl border border-border bg-card transition-shadow hover:shadow-md">
+    <Card className="group gap-0 overflow-hidden py-0 transition-shadow hover:shadow-md">
       <Link href={`/packages/${pkg.id}`} className="relative block aspect-square overflow-hidden bg-muted">
         {pkg.image ? (
           <Image
@@ -40,7 +41,7 @@ export function PackageCard({ pkg }: { pkg: Package }) {
           </Badge>
         )}
       </Link>
-      <div className="flex flex-1 flex-col gap-2 p-4">
+      <CardContent className="flex flex-1 flex-col gap-2 py-4">
         <Link href={`/packages/${pkg.id}`} className="font-medium leading-snug hover:underline">
           {pkg.name}
         </Link>
@@ -58,7 +59,7 @@ export function PackageCard({ pkg }: { pkg: Package }) {
           )}
         </div>
         <AddToBasketForm packageId={pkg.id ?? ""} size="sm" />
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 }

@@ -37,7 +37,7 @@ export function PropertyGrid({
           <dt className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
             {humanizeKey(key)}
           </dt>
-          <dd className="text-sm break-words">
+          <dd className="text-sm wrap-break-word">
             <PropertyValue value={fieldValue} />
           </dd>
         </div>

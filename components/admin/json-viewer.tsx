@@ -54,7 +54,7 @@ export function JSONViewer({
               Copied
             </span>
           )}
-          <pre className="max-h-[32rem] overflow-auto p-3 font-mono text-xs leading-relaxed">
+          <pre className="max-h-128 overflow-auto p-3 font-mono text-xs leading-relaxed">
             {json}
           </pre>
         </div>

@@ -2,6 +2,14 @@ import type { ReactNode } from "react";
 import type { LucideIcon } from "lucide-react";
 import { Inbox } from "lucide-react";
 
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/components/ui/empty";
 import { cn } from "@/lib/utils";
 
 export function EmptyState({
@@ -18,20 +26,15 @@ export function EmptyState({
   className?: string;
 }) {
   return (
-    <div
-      className={cn(
-        "flex flex-col items-center justify-center gap-3 rounded-lg border border-dashed border-border py-16 text-center",
-        className
-      )}
-    >
-      <Icon className="size-8 text-muted-foreground" strokeWidth={1.5} />
-      <div className="space-y-1">
-        <p className="text-sm font-medium">{title}</p>
-        {description && (
-          <p className="max-w-sm text-sm text-muted-foreground">{description}</p>
-        )}
-      </div>
-      {action}
-    </div>
+    <Empty className={cn("border", className)}>
+      <EmptyHeader>
+        <EmptyMedia variant="icon">
+          <Icon strokeWidth={1.5} />
+        </EmptyMedia>
+        <EmptyTitle>{title}</EmptyTitle>
+        {description && <EmptyDescription>{description}</EmptyDescription>}
+      </EmptyHeader>
+      {action && <EmptyContent>{action}</EmptyContent>}
+    </Empty>
   );
 }

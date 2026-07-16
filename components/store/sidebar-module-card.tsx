@@ -1,7 +1,8 @@
+import type { CSSProperties } from "react";
 import type { components } from "tebex-headless";
 
-import { ProgressBar } from "@/components/progress-bar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
 import { formatCurrency, formatNumber } from "@/lib/format";
 
 interface ModuleEnvelope {
@@ -10,10 +11,21 @@ interface ModuleEnvelope {
   data?: unknown;
 }
 
+const STRIPE_STYLE: CSSProperties = {
+  backgroundImage:
+    "linear-gradient(45deg, rgba(255,255,255,.15) 25%, transparent 25%, transparent 50%, rgba(255,255,255,.15) 50%, rgba(255,255,255,.15) 75%, transparent 75%, transparent)",
+  backgroundSize: "1rem 1rem",
+};
+
 /** Public-facing renderer for `/sidebar` modules. Unlike the admin version,
  * this silently omits anything it doesn't recognize instead of surfacing
  * raw JSON - a customer shouldn't see developer diagnostics. */
 export function StoreSidebarModule({ module }: { module: ModuleEnvelope }) {
+  // The schema doesn't mark `data` nullable, but the live API can return it
+  // as null for a module with nothing to show yet (e.g. no top customer
+  // recorded). Omit the module rather than crash on `data.header`.
+  if (!module.data) return null;
+
   switch (module.type) {
     case "top_customer": {
       const data = module.data as components["schemas"]["TopCustomerData"];
@@ -98,7 +110,10 @@ export function StoreSidebarModule({ module }: { module: ModuleEnvelope }) {
             <CardTitle className="text-sm">{data.header}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
-            <ProgressBar percentage={data.percentage} animated={data.bar_animated} />
+            <Progress
+              value={data.percentage}
+              indicatorStyle={data.bar_animated ? STRIPE_STYLE : undefined}
+            />
             <p className="text-xs text-muted-foreground">
               {data.total != null && data.target != null
                 ? `${formatCurrency(data.total)} raised of ${formatCurrency(data.target)} goal`
@@ -117,7 +132,10 @@ export function StoreSidebarModule({ module }: { module: ModuleEnvelope }) {
             <CardTitle className="text-sm">{data.header}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
-            <ProgressBar percentage={data.percentage} animated={data.bar_animated} />
+            <Progress
+              value={data.percentage}
+              indicatorStyle={data.bar_animated ? STRIPE_STYLE : undefined}
+            />
             <p className="text-xs text-muted-foreground">
               {data.total_payments != null && data.target != null
                 ? `${formatNumber(data.total_payments)} of ${formatNumber(data.target)}`
