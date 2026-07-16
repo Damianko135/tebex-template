@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { LifeBuoy } from "lucide-react";
+import { useRouter, usePathname } from "next/navigation";
+import { LifeBuoy, LogOut } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
 import {
   Sidebar,
   SidebarContent,
@@ -16,6 +17,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { authClient } from "@/lib/auth-client";
 
 import { NAV_GROUPS } from "./nav-config";
 
@@ -24,8 +26,19 @@ function isActivePath(pathname: string, href: string): boolean {
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
-export function AppSidebar() {
+export function AppSidebar({
+  user,
+}: {
+  user: { name: string; email: string };
+}) {
   const pathname = usePathname();
+  const router = useRouter();
+
+  async function handleSignOut() {
+    await authClient.signOut();
+    router.push("/admin/login");
+    router.refresh();
+  }
 
   return (
     <Sidebar collapsible="offcanvas">
@@ -68,11 +81,26 @@ export function AppSidebar() {
       </SidebarContent>
 
       <SidebarFooter>
+        <div className="flex items-center justify-between gap-2 px-2 py-1.5">
+          <div className="min-w-0">
+            <p className="truncate text-xs font-medium">{user.name}</p>
+            <p className="truncate text-xs text-muted-foreground">{user.email}</p>
+          </div>
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            onClick={handleSignOut}
+            aria-label="Sign out"
+            title="Sign out"
+          >
+            <LogOut className="size-4" />
+          </Button>
+        </div>
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton
               render={
-                <a href="https://docs.tebex.io/developers/headless-api/overview" target="_blank" rel="noreferrer">
+                <a href="https://github.com/tebexio/TebexHeadless-OpenAPI/blob/main/headless-api.yaml" target="_blank" rel="noreferrer">
                   <LifeBuoy />
                   <span>API documentation</span>
                 </a>

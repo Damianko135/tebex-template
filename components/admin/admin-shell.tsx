@@ -2,13 +2,20 @@ import type { ReactNode } from "react";
 
 import { Separator } from "@/components/ui/separator";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import type { Session } from "@/lib/auth";
 
 import { AppSidebar } from "./app-sidebar";
 
-export function AdminShell({ children }: { children: ReactNode }) {
+export function AdminShell({
+  children,
+  session,
+}: {
+  children: ReactNode;
+  session: Session;
+}) {
   return (
     <SidebarProvider className="min-h-svh">
-      <AppSidebar />
+      <AppSidebar user={session.user} />
       <SidebarInset>
         <header className="flex h-12 shrink-0 items-center gap-2 border-b border-border px-3">
           <SidebarTrigger />
