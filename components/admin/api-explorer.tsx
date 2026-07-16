@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 
-import { EmptyState } from "./empty-state";
+import { EmptyState } from "@/components/empty-state";
 import { JSONViewer } from "./json-viewer";
 
 const METHOD_TONE: Record<string, string> = {

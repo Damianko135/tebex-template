@@ -15,7 +15,7 @@ import {
 } from "@/lib/tebex/mutations";
 import { getBasketAuthUrls } from "@/lib/tebex/queries";
 
-import { type ActionState } from "@/components/admin/action-state";
+import { type ActionState } from "@/lib/action-state";
 
 function requireString(formData: FormData, key: string): string {
   const value = formData.get(key);

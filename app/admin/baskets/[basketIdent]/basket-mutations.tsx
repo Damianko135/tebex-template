@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { JSONViewer } from "@/components/admin/json-viewer";
 
-import { initialActionState } from "@/components/admin/action-state";
+import { initialActionState } from "@/lib/action-state";
 import {
   addPackageAction,
   applyCouponAction,

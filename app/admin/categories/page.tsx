@@ -3,8 +3,8 @@ import { Boxes } from "lucide-react";
 import type { components } from "tebex-headless";
 
 import { DataTable, type DataTableColumn } from "@/components/admin/data-table";
-import { EmptyState } from "@/components/admin/empty-state";
-import { ErrorPanel } from "@/components/admin/error-panel";
+import { EmptyState } from "@/components/empty-state";
+import { ErrorPanel } from "@/components/error-panel";
 import { PageHeader } from "@/components/admin/page-header";
 import { EnumBadge } from "@/components/admin/status-badge";
 import { getCategoriesWithPackages } from "@/lib/tebex/queries";

@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 
-import { initialActionState } from "@/components/admin/action-state";
+import { initialActionState } from "@/lib/action-state";
 import { createBasketAction, lookupBasketAction } from "./actions";
 
 function ActionFeedback({

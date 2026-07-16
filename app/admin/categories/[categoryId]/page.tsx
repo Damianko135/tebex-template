@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 
-import { ErrorPanel } from "@/components/admin/error-panel";
+import { ErrorPanel } from "@/components/error-panel";
 import { JSONViewer } from "@/components/admin/json-viewer";
 import { PackageTable } from "@/components/admin/package-table";
 import { PageHeader } from "@/components/admin/page-header";

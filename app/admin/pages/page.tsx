@@ -4,8 +4,8 @@ import { FileText } from "lucide-react";
 import type { components } from "tebex-headless";
 
 import { DataTable, type DataTableColumn } from "@/components/admin/data-table";
-import { ErrorPanel } from "@/components/admin/error-panel";
-import { EmptyState } from "@/components/admin/empty-state";
+import { ErrorPanel } from "@/components/error-panel";
+import { EmptyState } from "@/components/empty-state";
 import { PageHeader } from "@/components/admin/page-header";
 import { BooleanBadge } from "@/components/admin/status-badge";
 import { getCustomPages } from "@/lib/tebex/queries";

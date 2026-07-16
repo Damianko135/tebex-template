@@ -1,7 +1,7 @@
 import { Package } from "lucide-react";
 
-import { EmptyState } from "@/components/admin/empty-state";
-import { ErrorPanel } from "@/components/admin/error-panel";
+import { EmptyState } from "@/components/empty-state";
+import { ErrorPanel } from "@/components/error-panel";
 import { PackageTable } from "@/components/admin/package-table";
 import { PageHeader } from "@/components/admin/page-header";
 import { getAllPackages } from "@/lib/tebex/queries";

@@ -3,7 +3,7 @@ import { Boxes, ExternalLink, FileText, Package, Store } from "lucide-react";
 
 import { MetricCard, StatGrid } from "@/components/admin/metric-card";
 import { PageHeader } from "@/components/admin/page-header";
-import { ErrorPanel } from "@/components/admin/error-panel";
+import { ErrorPanel } from "@/components/error-panel";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { getAllPackages, getCategories, getCustomPages, getWebstore } from "@/lib/tebex/queries";

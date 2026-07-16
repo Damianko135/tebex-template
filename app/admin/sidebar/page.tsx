@@ -1,7 +1,7 @@
 import { LayoutPanelTop } from "lucide-react";
 
-import { EmptyState } from "@/components/admin/empty-state";
-import { ErrorPanel } from "@/components/admin/error-panel";
+import { EmptyState } from "@/components/empty-state";
+import { ErrorPanel } from "@/components/error-panel";
 import { PageHeader } from "@/components/admin/page-header";
 import { SidebarModuleCard } from "@/components/admin/sidebar-module-card";
 import { getSidebarModules } from "@/lib/tebex/queries";

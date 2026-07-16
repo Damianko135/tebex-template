@@ -4,7 +4,7 @@ import { useActionState } from "react";
 import { Trash2 } from "lucide-react";
 import type { components } from "tebex-headless";
 
-import { EmptyState } from "@/components/admin/empty-state";
+import { EmptyState } from "@/components/empty-state";
 import { EnumBadge } from "@/components/admin/status-badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/table";
 import { formatCurrency } from "@/lib/format";
 
-import { initialActionState } from "@/components/admin/action-state";
+import { initialActionState } from "@/lib/action-state";
 import { removePackageAction, updateQuantityAction } from "./actions";
 
 type BasketPackage = components["schemas"]["BasketPackage"];

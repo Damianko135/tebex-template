@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 
-import { EmptyState } from "./empty-state";
+import { EmptyState } from "@/components/empty-state";
 
 export interface DataTableColumn<T> {
   id: string;

@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 
-import { ErrorPanel } from "@/components/admin/error-panel";
+import { ErrorPanel } from "@/components/error-panel";
 import { JSONViewer } from "@/components/admin/json-viewer";
 import { PageHeader } from "@/components/admin/page-header";
 import { PropertyGrid } from "@/components/admin/property-grid";

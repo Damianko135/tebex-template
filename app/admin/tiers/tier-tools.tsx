@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { JSONViewer } from "@/components/admin/json-viewer";
 import { PropertyGrid } from "@/components/admin/property-grid";
-import { initialActionState } from "@/components/admin/action-state";
+import { initialActionState } from "@/lib/action-state";
 
 import { lookupTieredCategoriesAction, updateTierAction } from "./actions";
 

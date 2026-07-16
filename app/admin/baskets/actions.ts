@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { createBasket } from "@/lib/tebex/mutations";
 import { getBasket } from "@/lib/tebex/queries";
 
-import { type ActionState } from "@/components/admin/action-state";
+import { type ActionState } from "@/lib/action-state";
 
 function stringField(formData: FormData, key: string): string | undefined {
   const value = formData.get(key);
