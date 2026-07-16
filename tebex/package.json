@@ -7,14 +7,17 @@
   "scripts": {
     "fetch-schema": "tsx scripts/update-api.ts",
     "generate": "openapi-typescript openapi.yaml -o src/api/schema.d.ts",
-    "update": "pnpm run fetch-schema && pnpm run generate"
+    "build-manifest": "tsx scripts/build-endpoint-manifest.ts",
+    "update": "pnpm run fetch-schema && pnpm run generate && pnpm run build-manifest"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "module",
   "devDependencies": {
+    "@types/js-yaml": "^4.0.9",
     "@types/node": "^20",
+    "js-yaml": "^4.3.0",
     "openapi-typescript": "^7.13.0",
     "tsx": "^4.19.2"
   },
