@@ -8,9 +8,28 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-public-sans);
   --font-mono: var(--font-geist-mono);
-  --font-heading: var(--font-geist-sans);
+  /* Mid-scale editorial headings (CardTitle, SheetTitle, EmptyTitle, section
+     headings) - see components/ui/card.tsx etc. for `font-heading` usage. */
+  --font-heading: var(--font-libre-caslon-text);
+  /* Hero/display-scale type only (e.g. the storefront home page H1) - Libre
+     Caslon Display is a display-only cut, not designed for small sizes. */
+  --font-display: var(--font-libre-caslon-display);
+  /* Fluid display scale for storefront marketing/content headings (hero,
+     section titles) - clamp() so it scales with viewport without explicit
+     breakpoints. Admin/app UI intentionally keeps Tailwind's fixed text-*
+     scale instead; a settings table shouldn't reflow type by viewport. */
+  --text-display-lg: clamp(2.75rem, 2rem + 3.2vw, 4.75rem);
+  --text-display-lg--line-height: 1.05;
+  --text-display-lg--letter-spacing: -0.01em;
+  --text-display-md: clamp(2.25rem, 1.8rem + 1.8vw, 3.25rem);
+  --text-display-md--line-height: 1.1;
+  --text-display-md--letter-spacing: -0.01em;
+  --text-display-sm: clamp(1.5rem, 1.3rem + 0.8vw, 2rem);
+  --text-display-sm--line-height: 1.2;
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -56,6 +75,26 @@
   tag in app/layout.tsx, so the active theme can be changed without a rebuild.
 */
 
+/* Single, deliberate page-load reveal (opacity + transform only, per the
+   motion guidelines) - used for the storefront home page hero and its first
+   couple of card grids. `animation-delay` is set per-element via inline
+   style for staggering; this class only defines the motion itself. Neutralized
+   globally under prefers-reduced-motion (see @layer base below). */
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(0.75rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-up {
+  animation: fade-up 0.5s var(--ease-out-quart) both;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -65,5 +104,18 @@
   }
   html {
     @apply font-sans;
+  }
+
+  /* Global safety net: honor prefers-reduced-motion even for animations that
+     don't explicitly opt out via Tailwind's motion-reduce: variant. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    ::before,
+    ::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
   }
 }

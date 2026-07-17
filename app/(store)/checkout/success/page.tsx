@@ -13,7 +13,7 @@ export default async function CheckoutSuccessPage() {
   return (
     <div className="mx-auto max-w-xl px-4 py-24 text-center">
       <CheckCircle2 className="mx-auto size-14 text-emerald-500" />
-      <h1 className="mt-6 text-3xl font-bold tracking-tight">Thank you for your purchase!</h1>
+      <h1 className="mt-6 font-heading text-3xl tracking-tight">Thank you for your purchase!</h1>
       <p className="mt-2 text-muted-foreground">
         Your order has been received. Purchased items are typically delivered automatically in-game
         shortly after payment.

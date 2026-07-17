@@ -1,11 +1,32 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist_Mono, Libre_Caslon_Display, Libre_Caslon_Text, Public_Sans } from "next/font/google";
 import { getThemeStyle } from "@/lib/ui/theme";
 import "@/lib/ui/globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+// Public Sans (the US Web Design System's typeface) for body/UI text - built
+// for institutional clarity and legibility, which fits "professional,
+// trustworthy, storefront-focused" better than a trend-driven grotesque.
+const publicSans = Public_Sans({
+  variable: "--font-public-sans",
   subsets: ["latin"],
+});
+
+// Libre Caslon Text for mid-scale headings (card/sheet/empty-state titles,
+// section headings) - a classical, crisp serif for editorial confidence
+// without the softness of a warm humanist display serif.
+const libreCaslonText = Libre_Caslon_Text({
+  variable: "--font-libre-caslon-text",
+  subsets: ["latin"],
+  weight: ["400", "700"],
+});
+
+// Libre Caslon Display, reserved for hero/large-scale display type only
+// (see --font-display in globals.css) - a display-only cut, not meant for
+// small sizes.
+const libreCaslonDisplay = Libre_Caslon_Display({
+  variable: "--font-libre-caslon-display",
+  subsets: ["latin"],
+  weight: "400",
 });
 
 const geistMono = Geist_Mono({
@@ -31,7 +52,7 @@ export default async function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${publicSans.variable} ${libreCaslonText.variable} ${libreCaslonDisplay.variable} ${geistMono.variable} h-full antialiased`}
     >
       <head>
         <style id="theme-vars" dangerouslySetInnerHTML={{ __html: themeStyle }} />

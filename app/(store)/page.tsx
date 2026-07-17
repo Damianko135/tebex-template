@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
@@ -16,6 +17,13 @@ import {
 } from "@/lib/tebex/queries";
 
 export const dynamic = "force-dynamic";
+
+/** Staggers a grid item's `animate-fade-up` entrance (see globals.css) by
+ * its position, capped so a long grid doesn't take forever to finish
+ * revealing. */
+function revealDelay(index: number, stepMs = 40, maxMs = 320): CSSProperties {
+  return { animationDelay: `${Math.min(index * stepMs, maxMs)}ms` };
+}
 
 export default async function HomePage() {
   const [webstoreResult, categoriesResult, packagesResult, sidebarResult] = await Promise.all([
@@ -52,18 +60,21 @@ export default async function HomePage() {
   const otherModules = modules.filter((module) => module.type !== "featured_package");
 
   return (
-    <div className="space-y-20 pb-20">
-      <section className="relative overflow-hidden border-b border-border bg-linear-to-br from-primary/10 via-background to-background">
+    <div className="space-y-24 pb-24">
+      <section className="border-b border-border">
         <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 sm:py-28">
-          <div className="max-w-2xl space-y-6">
-            <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">{webstore?.name}</h1>
+          <div className="max-w-3xl space-y-7">
+            <h1 className="animate-fade-up font-display text-display-lg text-balance">
+              {webstore?.name}
+            </h1>
             {webstore?.description && (
               <div
-                className="prose prose-sm sm:prose-base dark:prose-invert max-w-none text-muted-foreground"
+                className="prose prose-sm sm:prose-base dark:prose-invert max-w-2xl animate-fade-up text-muted-foreground"
+                style={revealDelay(1, 80)}
                 dangerouslySetInnerHTML={{ __html: webstore.description }}
               />
             )}
-            <div className="flex flex-wrap gap-3 pt-2">
+            <div className="animate-fade-up flex flex-wrap gap-3 pt-3" style={revealDelay(2, 80)}>
               <Button size="lg" render={<Link href="/categories" />}>
                 Shop now <ArrowRight className="size-4" />
               </Button>
@@ -77,7 +88,7 @@ export default async function HomePage() {
 
       {featuredModule && (
         <section className="mx-auto max-w-7xl px-4 sm:px-6">
-          <div className="grid grid-cols-1 gap-6 overflow-hidden rounded-2xl border border-border bg-card md:grid-cols-2">
+          <div className="grid grid-cols-1 gap-6 overflow-hidden rounded-lg border border-border bg-card md:grid-cols-2">
             <div className="relative aspect-video bg-muted md:aspect-auto">
               {featuredModule.data.package.image && (
                 <Image
@@ -89,17 +100,17 @@ export default async function HomePage() {
                 />
               )}
             </div>
-            <div className="flex flex-col justify-center gap-3 p-8">
+            <div className="flex flex-col justify-center gap-3 p-10">
               <span className="text-xs font-medium tracking-wide text-primary uppercase">
                 {featuredModule.data.header}
               </span>
-              <h2 className="text-2xl font-semibold">{featuredModule.data.package.name}</h2>
+              <h2 className="font-heading text-2xl">{featuredModule.data.package.name}</h2>
               {featuredModule.data.package.total_price !== undefined && (
-                <p className="text-2xl font-semibold">
+                <p className="text-2xl font-medium">
                   {formatCurrency(featuredModule.data.package.total_price, featuredModule.data.package.currency)}
                 </p>
               )}
-              <div className="flex gap-3 pt-2">
+              <div className="flex gap-3 pt-3">
                 <Button variant="outline" render={<Link href={`/packages/${featuredModule.data.package.id}`} />}>
                   View details
                 </Button>
@@ -112,15 +123,15 @@ export default async function HomePage() {
 
       {topLevelCategories.length > 0 && (
         <section className="mx-auto max-w-7xl px-4 sm:px-6">
-          <div className="mb-6 flex items-end justify-between">
-            <h2 className="text-2xl font-semibold">Shop by category</h2>
+          <div className="mb-8 flex items-end justify-between">
+            <h2 className="font-heading text-2xl">Shop by category</h2>
             <Link href="/categories" className="text-sm text-primary hover:underline">
               View all
             </Link>
           </div>
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-            {topLevelCategories.map((category) => (
-              <CategoryCard key={category.id} category={category} />
+          <div className="grid grid-cols-[repeat(auto-fill,minmax(11rem,1fr))] gap-5">
+            {topLevelCategories.map((category, index) => (
+              <CategoryCard key={category.id} category={category} style={revealDelay(index)} />
             ))}
           </div>
         </section>
@@ -128,15 +139,15 @@ export default async function HomePage() {
 
       {newArrivals.length > 0 && (
         <section className="mx-auto max-w-7xl px-4 sm:px-6">
-          <div className="mb-6 flex items-end justify-between">
-            <h2 className="text-2xl font-semibold">New arrivals</h2>
+          <div className="mb-8 flex items-end justify-between">
+            <h2 className="font-heading text-2xl">New arrivals</h2>
             <Link href="/packages" className="text-sm text-primary hover:underline">
               Browse all packages
             </Link>
           </div>
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-            {newArrivals.map((pkg) => (
-              <PackageCard key={pkg.id} pkg={pkg} />
+          <div className="grid grid-cols-[repeat(auto-fill,minmax(11rem,1fr))] gap-5">
+            {newArrivals.map((pkg, index) => (
+              <PackageCard key={pkg.id} pkg={pkg} style={revealDelay(index)} />
             ))}
           </div>
         </section>
@@ -144,7 +155,7 @@ export default async function HomePage() {
 
       {otherModules.length > 0 && (
         <section className="mx-auto max-w-7xl px-4 sm:px-6">
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-[repeat(auto-fill,minmax(16rem,1fr))] gap-4">
             {otherModules.map((module) => (
               <StoreSidebarModule key={module.id} module={module} />
             ))}

@@ -7,7 +7,7 @@ export default function CheckoutCancelPage() {
   return (
     <div className="mx-auto max-w-xl px-4 py-24 text-center">
       <XCircle className="mx-auto size-14 text-muted-foreground" />
-      <h1 className="mt-6 text-3xl font-bold tracking-tight">Checkout cancelled</h1>
+      <h1 className="mt-6 font-heading text-3xl tracking-tight">Checkout cancelled</h1>
       <p className="mt-2 text-muted-foreground">
         No payment was taken. Your basket is still saved if you&apos;d like to try again.
       </p>

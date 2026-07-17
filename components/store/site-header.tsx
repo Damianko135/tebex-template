@@ -48,7 +48,7 @@ export function SiteHeader({
     <Link
       href={href}
       className={cn(
-        "text-sm font-medium text-muted-foreground transition-colors hover:text-foreground",
+        "text-xs font-medium tracking-wide text-muted-foreground uppercase transition-colors hover:text-foreground",
         pathname === href && "text-foreground"
       )}
     >
@@ -57,22 +57,22 @@ export function SiteHeader({
   );
 
   return (
-    <header className="sticky top-0 z-40 border-b border-border bg-background/80 backdrop-blur-sm">
-      <div className="mx-auto flex h-16 max-w-7xl items-center gap-4 px-4 sm:px-6">
-        <Link href="/" className="flex items-center gap-2 font-semibold">
+    <header className="sticky top-0 z-40 border-b border-border bg-background">
+      <div className="mx-auto flex h-20 max-w-7xl items-center gap-6 px-4 sm:px-6">
+        <Link href="/" className="flex items-center gap-2.5">
           {logo ? (
-            <Image src={logo} alt={storeName} width={28} height={28} unoptimized className="rounded-md" />
+            <Image src={logo} alt={storeName} width={30} height={30} unoptimized className="rounded-sm" />
           ) : (
-            <Store className="size-6" />
+            <Store className="size-5 text-primary" strokeWidth={1.75} />
           )}
-          <span className="hidden sm:inline">{storeName}</span>
+          <span className="hidden font-heading text-lg tracking-tight sm:inline">{storeName}</span>
         </Link>
 
-        <nav className="hidden items-center gap-6 md:flex">
+        <nav className="hidden items-center gap-7 md:flex">
           {navLink("/", "Home")}
           {categories.length > 0 ? (
             <DropdownMenu>
-              <DropdownMenuTrigger className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+              <DropdownMenuTrigger className="flex items-center gap-1 text-xs font-medium tracking-wide text-muted-foreground uppercase transition-colors hover:text-foreground">
                 Categories <ChevronDown className="size-3.5" />
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start">
@@ -90,7 +90,7 @@ export function SiteHeader({
           {navLink("/packages", "All packages")}
           {pages.length > 0 && (
             <DropdownMenu>
-              <DropdownMenuTrigger className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+              <DropdownMenuTrigger className="flex items-center gap-1 text-xs font-medium tracking-wide text-muted-foreground uppercase transition-colors hover:text-foreground">
                 Info <ChevronDown className="size-3.5" />
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start">
@@ -106,13 +106,13 @@ export function SiteHeader({
 
         <form action="/search" className="ml-auto hidden max-w-xs flex-1 sm:flex">
           <div className="relative w-full">
-            <Search className="pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground" />
-            <Input name="q" placeholder="Search packages..." className="pl-8" />
+            <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+            <Input name="q" placeholder="Search packages…" className="h-9 pl-9" />
           </div>
         </form>
 
         <Link href="/basket" className="relative ml-auto sm:ml-0" aria-label="Basket">
-          <Button variant="outline" size="icon">
+          <Button variant="outline" size="icon-lg">
             <ShoppingCart className="size-4" />
           </Button>
           {cartCount > 0 && (
@@ -123,7 +123,7 @@ export function SiteHeader({
         </Link>
 
         <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
-          <SheetTrigger render={<Button variant="ghost" size="icon" className="md:hidden" />}>
+          <SheetTrigger render={<Button variant="ghost" size="icon-lg" className="md:hidden" />}>
             <Menu className="size-5" />
           </SheetTrigger>
           <SheetContent side="right">
@@ -131,23 +131,23 @@ export function SiteHeader({
               <SheetTitle>{storeName}</SheetTitle>
             </SheetHeader>
             <nav className="flex flex-col gap-1 px-4">
-              <Link href="/" className="rounded-md px-2 py-2 text-sm font-medium hover:bg-muted" onClick={() => setMobileOpen(false)}>
+              <Link href="/" className="rounded-sm px-2 py-2.5 text-sm font-medium hover:bg-muted" onClick={() => setMobileOpen(false)}>
                 Home
               </Link>
-              <Link href="/categories" className="rounded-md px-2 py-2 text-sm font-medium hover:bg-muted" onClick={() => setMobileOpen(false)}>
+              <Link href="/categories" className="rounded-sm px-2 py-2.5 text-sm font-medium hover:bg-muted" onClick={() => setMobileOpen(false)}>
                 Categories
               </Link>
-              <Link href="/packages" className="rounded-md px-2 py-2 text-sm font-medium hover:bg-muted" onClick={() => setMobileOpen(false)}>
+              <Link href="/packages" className="rounded-sm px-2 py-2.5 text-sm font-medium hover:bg-muted" onClick={() => setMobileOpen(false)}>
                 All packages
               </Link>
-              <Link href="/basket" className="rounded-md px-2 py-2 text-sm font-medium hover:bg-muted" onClick={() => setMobileOpen(false)}>
+              <Link href="/basket" className="rounded-sm px-2 py-2.5 text-sm font-medium hover:bg-muted" onClick={() => setMobileOpen(false)}>
                 Basket
               </Link>
               {pages.map((page) => (
                 <Link
                   key={page.id}
                   href={`/pages/${page.slug}`}
-                  className="rounded-md px-2 py-2 text-sm font-medium hover:bg-muted"
+                  className="rounded-sm px-2 py-2.5 text-sm font-medium hover:bg-muted"
                   onClick={() => setMobileOpen(false)}
                 >
                   {page.title}
@@ -157,7 +157,7 @@ export function SiteHeader({
             <form action="/search" className="px-4">
               <div className="relative w-full">
                 <Search className="pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground" />
-                <Input name="q" placeholder="Search packages..." className="pl-8" />
+                <Input name="q" placeholder="Search packages…" className="pl-8" />
               </div>
             </form>
           </SheetContent>

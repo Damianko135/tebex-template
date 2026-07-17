@@ -16,7 +16,7 @@ export default async function SearchPage({
   return (
     <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
       <div className="mb-8 space-y-1">
-        <h1 className="text-3xl font-bold tracking-tight">Search</h1>
+        <h1 className="font-heading text-3xl tracking-tight">Search</h1>
         <p className="text-muted-foreground">
           {q ? (
             <>

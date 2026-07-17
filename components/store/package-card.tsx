@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ImageOff } from "lucide-react";
@@ -11,11 +12,18 @@ import { AddToBasketForm } from "./add-to-basket-form";
 
 type Package = components["schemas"]["Package"];
 
-export function PackageCard({ pkg }: { pkg: Package }) {
+export function PackageCard({
+  pkg,
+  style,
+}: {
+  pkg: Package;
+  /** Used by call sites to stagger this card's entrance animation. */
+  style?: CSSProperties;
+}) {
   const hasDiscount = Boolean(pkg.discount && pkg.discount > 0);
 
   return (
-    <Card className="group gap-0 overflow-hidden py-0 transition-shadow hover:shadow-md">
+    <Card className="@container/pcard group animate-fade-up gap-0 overflow-hidden rounded-lg py-0" style={style}>
       <Link href={`/packages/${pkg.id}`} className="relative block aspect-square overflow-hidden bg-muted">
         {pkg.image ? (
           <Image
@@ -23,7 +31,7 @@ export function PackageCard({ pkg }: { pkg: Package }) {
             alt={pkg.name ?? ""}
             fill
             unoptimized
-            className="object-cover transition-transform duration-300 group-hover:scale-105"
+            className="object-cover transition-transform duration-300 ease-out group-hover:scale-105"
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center">
@@ -41,8 +49,13 @@ export function PackageCard({ pkg }: { pkg: Package }) {
           </Badge>
         )}
       </Link>
-      <CardContent className="flex flex-1 flex-col gap-2 py-4">
-        <Link href={`/packages/${pkg.id}`} className="font-medium leading-snug hover:underline">
+      {/* Padding and title size respond to the card's own rendered width
+          (auto-fill grid, see app/(store)/page.tsx), not the viewport. */}
+      <CardContent className="flex flex-1 flex-col gap-2 py-4 @sm/pcard:gap-2.5 @sm/pcard:py-5">
+        <Link
+          href={`/packages/${pkg.id}`}
+          className="font-heading leading-snug hover:text-primary @sm/pcard:text-lg"
+        >
           {pkg.name}
         </Link>
         {pkg.category?.name && (
@@ -50,7 +63,7 @@ export function PackageCard({ pkg }: { pkg: Package }) {
         )}
         <div className="mt-auto flex items-baseline gap-2 pt-1">
           {pkg.total_price !== undefined && (
-            <span className="text-lg font-semibold">{formatCurrency(pkg.total_price, pkg.currency)}</span>
+            <span className="text-lg font-medium">{formatCurrency(pkg.total_price, pkg.currency)}</span>
           )}
           {hasDiscount && pkg.base_price !== undefined && (
             <span className="text-sm text-muted-foreground line-through">

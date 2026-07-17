@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Boxes } from "lucide-react";
@@ -8,9 +9,19 @@ import { Card } from "@/components/ui/card";
 
 type Category = components["schemas"]["Category"];
 
-export function CategoryCard({ category }: { category: Category }) {
+export function CategoryCard({
+  category,
+  style,
+}: {
+  category: Category;
+  /** Used by call sites to stagger this card's entrance animation. */
+  style?: CSSProperties;
+}) {
   return (
-    <Card className="group gap-0 overflow-hidden bg-muted py-0">
+    <Card
+      className="@container/ccard group animate-fade-up gap-0 overflow-hidden rounded-lg bg-muted py-0"
+      style={style}
+    >
       <Link
         href={`/categories/${category.id}`}
         className="relative flex aspect-4/3 flex-col justify-end"
@@ -21,13 +32,16 @@ export function CategoryCard({ category }: { category: Category }) {
             alt={category.name ?? ""}
             fill
             unoptimized
-            className="object-cover transition-transform duration-300 group-hover:scale-105"
+            className="object-cover transition-transform duration-300 ease-out group-hover:scale-105"
           />
         ) : (
           <Boxes className="absolute inset-0 m-auto size-10 text-muted-foreground/30" />
         )}
+        {/* Text size responds to the card's own rendered width (auto-fill
+            grid, see app/(store)/page.tsx), not the viewport - a narrow
+            viewport can still produce a wide card, and vice versa. */}
         <div className="relative z-10 bg-linear-to-t from-black/70 to-transparent p-4 pt-10">
-          <p className="font-semibold text-white">{category.name}</p>
+          <p className="font-heading text-white @sm/ccard:text-lg">{category.name}</p>
           {category.packages && (
             <Badge variant="outline" className="mt-1 border-white/30 text-white/90">
               {category.packages.length} {category.packages.length === 1 ? "item" : "items"}

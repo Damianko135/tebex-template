@@ -84,7 +84,7 @@ export default async function PackageDetailPage({ params }: PackagePageProps) {
                 {pkg.type}
               </Badge>
             )}
-            <h1 className="text-3xl font-bold tracking-tight">{pkg.name}</h1>
+            <h1 className="font-heading text-3xl tracking-tight">{pkg.name}</h1>
           </div>
 
           <div className="flex items-baseline gap-3">

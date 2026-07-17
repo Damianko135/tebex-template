@@ -51,7 +51,7 @@ export default async function CategoryDetailPage({ params }: CategoryPageProps) 
         <span className="text-foreground">{category.name}</span>
       </div>
       <div className="mb-8 space-y-1">
-        <h1 className="text-3xl font-bold tracking-tight">{category.name}</h1>
+        <h1 className="font-heading text-3xl tracking-tight">{category.name}</h1>
         {category.description && (
           <div
             className="prose prose-sm dark:prose-invert max-w-none text-muted-foreground"
