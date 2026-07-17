@@ -1,7 +1,8 @@
 import { Skeleton } from "@/components/ui/skeleton";
 
 // Overrides app/(store)/loading.tsx's grid-shaped default with the package
-// detail page's actual two-column layout - see impeccable critique.
+// detail page's actual two-column layout, avoiding a visible layout shift
+// once the real content arrives.
 export default function PackageDetailLoading() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6">

@@ -111,7 +111,6 @@ function PropertyValue({ value }: { value: unknown }) {
     );
   }
 
-  // Plain nested object.
   return (
     <div className="rounded-md border border-border p-2">
       <PropertyGrid value={value as Record<string, unknown>} columns={1} />

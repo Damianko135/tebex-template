@@ -2,8 +2,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 // Next.js resolves the nearest loading.tsx to the route being fetched, so
 // this overrides app/(store)/loading.tsx's grid-shaped skeleton with one
-// that matches the basket page's actual list-plus-summary layout - the
-// shared default caused a visible layout "pop" here (see impeccable critique).
+// that matches the basket page's actual list-plus-summary layout, avoiding
+// a visible layout shift once the real content arrives.
 export default function BasketLoading() {
   return (
     <div className="mx-auto max-w-5xl px-4 py-14 sm:px-6">
