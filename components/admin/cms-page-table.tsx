@@ -10,7 +10,6 @@ import { BooleanBadge } from "./status-badge";
 
 type CMSPage = components["schemas"]["CMSPage"];
 
-/** Reused by the admin CMS pages list page. */
 export function CMSPageTable({ pages }: { pages: CMSPage[] }) {
   const columns: DataTableColumn<CMSPage>[] = [
     {

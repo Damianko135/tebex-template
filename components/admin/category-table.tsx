@@ -8,7 +8,6 @@ import { EnumBadge } from "./status-badge";
 
 type Category = components["schemas"]["Category"];
 
-/** Reused by the admin categories list page. */
 export function CategoryTable({ categories }: { categories: Category[] }) {
   const columns: DataTableColumn<Category>[] = [
     {
