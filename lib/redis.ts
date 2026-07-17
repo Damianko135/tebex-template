@@ -4,8 +4,6 @@ import Redis from "ioredis";
 
 const redisUrl = process.env.REDIS_URL;
 
-export const redisBackend: "redis" | "memory" = redisUrl ? "redis" : "memory";
-
 // `lib/storage/storage.ts` (theme settings) goes through `unstorage`'s own
 // redis driver, which manages its own internal ioredis connection and
 // doesn't accept an externally-created client. This module is the single

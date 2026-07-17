@@ -9,8 +9,6 @@ import {
 
 const storeToken = process.env.TEBEX_STORE_TOKEN;
 
-export const isTebexConfigured = Boolean(storeToken);
-
 let client: TebexClient | null = null;
 let basketClient: TebexBasketClient | null = null;
 

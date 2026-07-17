@@ -4,26 +4,39 @@ export function looksLikeDate(value: string): boolean {
   return ISO_DATE_RE.test(value);
 }
 
+// Intl formatter construction (locale-data lookup) isn't free, and these are
+// called per-row across tables/lists - hoisted so it happens once per
+// process instead of once per call. Locale is always `undefined` (runtime
+// default), so a single shared instance is correct here.
+const DATE_TIME_FORMAT = new Intl.DateTimeFormat(undefined, { dateStyle: "medium", timeStyle: "short" });
+const NUMBER_FORMAT = new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 });
+// Currency varies per call (a webstore can price different packages in
+// different currencies), so this caches one formatter per currency code
+// instead of one per call - still just a handful of entries in practice.
+const currencyFormatCache = new Map<string, Intl.NumberFormat>();
+
 export function formatDate(value: string): string {
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return value;
-  return new Intl.DateTimeFormat(undefined, {
-    dateStyle: "medium",
-    timeStyle: "short",
-  }).format(date);
+  return DATE_TIME_FORMAT.format(date);
 }
 
 export function formatNumber(value: number): string {
-  return new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 }).format(value);
+  return NUMBER_FORMAT.format(value);
 }
 
 export function formatCurrency(value: number, currency?: string): string {
   if (!currency) return formatNumber(value);
-  try {
-    return new Intl.NumberFormat(undefined, { style: "currency", currency }).format(value);
-  } catch {
-    return `${formatNumber(value)} ${currency}`;
+  let formatter = currencyFormatCache.get(currency);
+  if (!formatter) {
+    try {
+      formatter = new Intl.NumberFormat(undefined, { style: "currency", currency });
+    } catch {
+      return `${formatNumber(value)} ${currency}`;
+    }
+    currencyFormatCache.set(currency, formatter);
   }
+  return formatter.format(value);
 }
 
 export function looksLikeUrl(value: string): boolean {

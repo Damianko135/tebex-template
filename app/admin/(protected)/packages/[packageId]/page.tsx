@@ -86,7 +86,7 @@ export default async function PackageDetailPage({
             {pkg.media && pkg.media.length > 0 ? (
               <div className="grid grid-cols-2 gap-2">
                 {pkg.media.map((media, index) => (
-                  <div key={index} className="space-y-1">
+                  <div key={media.url ?? `media-${index}`} className="space-y-1">
                     <Image
                       src={media.url ?? ""}
                       alt={media.name ?? ""}

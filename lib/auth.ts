@@ -3,8 +3,11 @@ import "server-only";
 import { betterAuth } from "better-auth";
 import { nextCookies } from "better-auth/next-js";
 import { username } from "better-auth/plugins";
+import { headers } from "next/headers";
 
 import { redisAdapter } from "./auth-redis-adapter";
+import { getSimpleSession } from "./auth-simple";
+import { redis } from "./redis";
 
 /**
  * Authenticates administrators of this application (the /admin dashboard)
@@ -59,3 +62,18 @@ export const auth = betterAuth({
 });
 
 export type Session = typeof auth.$Infer.Session;
+
+/**
+ * True if the current request has a valid admin session, checked the same
+ * way regardless of `REDIS_URL` (see lib/auth-simple.ts). Server Actions are
+ * callable directly over HTTP once deployed, bypassing whatever a page's own
+ * layout-level session check would otherwise enforce - every admin Server
+ * Action that mutates data must call this itself, not rely on
+ * app/admin/(protected)/layout.tsx alone.
+ */
+export async function hasAdminSession(): Promise<boolean> {
+  if (redis) {
+    return (await auth.api.getSession({ headers: await headers() })) !== null;
+  }
+  return (await getSimpleSession()) !== null;
+}

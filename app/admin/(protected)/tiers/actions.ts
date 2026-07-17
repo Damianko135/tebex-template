@@ -4,12 +4,16 @@ import { getUserTieredCategories } from "@/lib/tebex/queries";
 import { updateTier } from "@/lib/tebex/mutations";
 
 import type { ActionState } from "@/lib/action-state";
+import { hasAdminSession } from "@/lib/auth";
 import { stringField } from "@/lib/form-data";
+
+const NOT_SIGNED_IN: ActionState = { status: "error", message: "You must be signed in as an admin." };
 
 export async function lookupTieredCategoriesAction(
   _prev: ActionState,
   formData: FormData
 ): Promise<ActionState> {
+  if (!(await hasAdminSession())) return NOT_SIGNED_IN;
   const usernameIdRaw = stringField(formData, "usernameId");
   const authUsername = stringField(formData, "auth_username");
   const authPassword = stringField(formData, "auth_password");
@@ -33,6 +37,7 @@ export async function updateTierAction(
   _prev: ActionState,
   formData: FormData
 ): Promise<ActionState> {
+  if (!(await hasAdminSession())) return NOT_SIGNED_IN;
   const tierIdRaw = stringField(formData, "tierId");
   const packageIdRaw = stringField(formData, "package_id");
   const authUsername = stringField(formData, "auth_username");

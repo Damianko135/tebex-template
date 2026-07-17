@@ -6,12 +6,16 @@ import { createBasket } from "@/lib/tebex/mutations";
 import { getBasket } from "@/lib/tebex/queries";
 
 import { type ActionState } from "@/lib/action-state";
+import { hasAdminSession } from "@/lib/auth";
 import { stringField } from "@/lib/form-data";
+
+const NOT_SIGNED_IN: ActionState = { status: "error", message: "You must be signed in as an admin." };
 
 export async function createBasketAction(
   _prevState: ActionState,
   formData: FormData
 ): Promise<ActionState> {
+  if (!(await hasAdminSession())) return NOT_SIGNED_IN;
   const customRaw = stringField(formData, "custom");
   let custom: Record<string, unknown> | undefined;
   if (customRaw) {
@@ -45,6 +49,7 @@ export async function lookupBasketAction(
   _prevState: ActionState,
   formData: FormData
 ): Promise<ActionState> {
+  if (!(await hasAdminSession())) return NOT_SIGNED_IN;
   const ident = stringField(formData, "basketIdent");
   if (!ident) {
     return { status: "error", message: "Enter a basket identifier." };

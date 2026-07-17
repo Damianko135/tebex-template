@@ -5,12 +5,16 @@ import { revalidatePath } from "next/cache";
 import { resetTheme, setTheme } from "@/lib/ui/theme";
 import type { ThemeOverrides } from "@/lib/ui/tokens";
 import type { ActionState } from "@/lib/action-state";
+import { hasAdminSession } from "@/lib/auth";
 import { THEME_TOKEN_FIELDS } from "./theme-fields";
+
+const NOT_SIGNED_IN: ActionState = { status: "error", message: "You must be signed in as an admin." };
 
 export async function updateThemeAction(
   _prevState: ActionState,
   formData: FormData
 ): Promise<ActionState> {
+  if (!(await hasAdminSession())) return NOT_SIGNED_IN;
   try {
     const light: Record<string, string> = {};
     const dark: Record<string, string> = {};
@@ -50,6 +54,7 @@ export async function resetThemeAction(
   _prevState: ActionState,
   _formData: FormData
 ): Promise<ActionState> {
+  if (!(await hasAdminSession())) return NOT_SIGNED_IN;
   await resetTheme();
   revalidatePath("/", "layout");
   return { status: "success", message: "Theme reset to defaults." };

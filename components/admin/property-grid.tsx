@@ -46,7 +46,7 @@ export function PropertyGrid({
   );
 }
 
-export function PropertyValue({ value }: { value: unknown }) {
+function PropertyValue({ value }: { value: unknown }) {
   if (value === null || value === undefined || value === "") {
     return <NullableValue />;
   }

@@ -74,7 +74,10 @@ export default async function PackageDetailPage({ params }: PackagePageProps) {
           {gallery.length > 1 && (
             <div className="grid grid-cols-4 gap-2">
               {gallery.slice(1, 5).map((media, index) => (
-                <div key={index} className="relative aspect-square overflow-hidden rounded-md border border-border bg-muted">
+                <div
+                  key={media.url ?? `media-${index}`}
+                  className="relative aspect-square overflow-hidden rounded-md border border-border bg-muted"
+                >
                   {media.url && (
                     <Image src={media.url} alt={media.name ?? ""} fill unoptimized className="object-cover" />
                   )}

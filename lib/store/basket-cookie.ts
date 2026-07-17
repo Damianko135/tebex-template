@@ -21,9 +21,3 @@ export async function setBasketIdent(ident: string): Promise<void> {
     maxAge: COOKIE_MAX_AGE,
   });
 }
-
-/** Only callable from a Server Action or Route Handler. */
-export async function clearBasketIdent(): Promise<void> {
-  const store = await cookies();
-  store.delete(BASKET_COOKIE);
-}

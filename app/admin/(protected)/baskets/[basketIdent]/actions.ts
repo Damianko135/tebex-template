@@ -16,7 +16,10 @@ import {
 import { getBasketAuthUrls } from "@/lib/tebex/queries";
 
 import { type ActionState } from "@/lib/action-state";
+import { hasAdminSession } from "@/lib/auth";
 import { stringField } from "@/lib/form-data";
+
+const NOT_SIGNED_IN: ActionState = { status: "error", message: "You must be signed in as an admin." };
 
 function revalidateBasket(basketIdent: string) {
   revalidatePath(`/admin/baskets/${basketIdent}`);
@@ -26,6 +29,7 @@ export async function applyCouponAction(
   _prev: ActionState,
   formData: FormData
 ): Promise<ActionState> {
+  if (!(await hasAdminSession())) return NOT_SIGNED_IN;
   const basketIdent = stringField(formData, "basketIdent");
   const couponCode = stringField(formData, "coupon_code");
   if (!basketIdent || !couponCode) return { status: "error", message: "Enter a coupon code." };
@@ -39,6 +43,7 @@ export async function removeCouponAction(
   _prev: ActionState,
   formData: FormData
 ): Promise<ActionState> {
+  if (!(await hasAdminSession())) return NOT_SIGNED_IN;
   const basketIdent = stringField(formData, "basketIdent");
   const couponCode = stringField(formData, "coupon_code");
   if (!basketIdent || !couponCode) return { status: "error", message: "Missing coupon." };
@@ -52,6 +57,7 @@ export async function applyGiftCardAction(
   _prev: ActionState,
   formData: FormData
 ): Promise<ActionState> {
+  if (!(await hasAdminSession())) return NOT_SIGNED_IN;
   const basketIdent = stringField(formData, "basketIdent");
   const cardNumber = stringField(formData, "card_number");
   if (!basketIdent || !cardNumber) return { status: "error", message: "Enter a gift card number." };
@@ -65,6 +71,7 @@ export async function removeGiftCardAction(
   _prev: ActionState,
   formData: FormData
 ): Promise<ActionState> {
+  if (!(await hasAdminSession())) return NOT_SIGNED_IN;
   const basketIdent = stringField(formData, "basketIdent");
   const cardNumber = stringField(formData, "card_number");
   if (!basketIdent || !cardNumber) return { status: "error", message: "Missing gift card." };
@@ -78,6 +85,7 @@ export async function applyCreatorCodeAction(
   _prev: ActionState,
   formData: FormData
 ): Promise<ActionState> {
+  if (!(await hasAdminSession())) return NOT_SIGNED_IN;
   const basketIdent = stringField(formData, "basketIdent");
   const creatorCode = stringField(formData, "creator_code");
   if (!basketIdent || !creatorCode) return { status: "error", message: "Enter a creator code." };
@@ -91,6 +99,7 @@ export async function removeCreatorCodeAction(
   _prev: ActionState,
   formData: FormData
 ): Promise<ActionState> {
+  if (!(await hasAdminSession())) return NOT_SIGNED_IN;
   const basketIdent = stringField(formData, "basketIdent");
   if (!basketIdent) return { status: "error", message: "Missing basket." };
   const result = await removeCreatorCode(basketIdent);
@@ -103,6 +112,7 @@ export async function addPackageAction(
   _prev: ActionState,
   formData: FormData
 ): Promise<ActionState> {
+  if (!(await hasAdminSession())) return NOT_SIGNED_IN;
   const basketIdent = stringField(formData, "basketIdent");
   const packageId = stringField(formData, "package_id");
   if (!basketIdent || !packageId) return { status: "error", message: "Missing basket or package." };
@@ -118,6 +128,7 @@ export async function removePackageAction(
   _prev: ActionState,
   formData: FormData
 ): Promise<ActionState> {
+  if (!(await hasAdminSession())) return NOT_SIGNED_IN;
   const basketIdent = stringField(formData, "basketIdent");
   const packageId = stringField(formData, "package_id");
   if (!basketIdent || !packageId) return { status: "error", message: "Missing basket or package." };
@@ -131,6 +142,7 @@ export async function updateQuantityAction(
   _prev: ActionState,
   formData: FormData
 ): Promise<ActionState> {
+  if (!(await hasAdminSession())) return NOT_SIGNED_IN;
   const basketIdent = stringField(formData, "basketIdent");
   const packageId = stringField(formData, "package_id");
   if (!basketIdent || !packageId) return { status: "error", message: "Missing basket or package." };
@@ -145,6 +157,7 @@ export async function getAuthUrlsAction(
   _prev: ActionState,
   formData: FormData
 ): Promise<ActionState> {
+  if (!(await hasAdminSession())) return NOT_SIGNED_IN;
   const basketIdent = stringField(formData, "basketIdent");
   const returnUrl = stringField(formData, "returnUrl");
   if (!basketIdent || !returnUrl) return { status: "error", message: "Missing basket or return URL." };
