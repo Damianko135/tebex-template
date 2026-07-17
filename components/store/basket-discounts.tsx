@@ -37,18 +37,32 @@ export function BasketDiscounts({
   giftcards: GiftCard[];
   creatorCode?: string;
 }) {
-  const [couponState, applyCoupon, applyingCoupon] = useActionState(applyCouponAction, initialActionState);
-  const [, removeCoupon] = useActionState(removeCouponAction, initialActionState);
-  const [giftCardState, applyGiftCard, applyingGiftCard] = useActionState(
+  const [applyCouponState, applyCoupon, applyingCoupon] = useActionState(applyCouponAction, initialActionState);
+  const [removeCouponState, removeCoupon, removingCoupon] = useActionState(
+    removeCouponAction,
+    initialActionState
+  );
+  const couponState = removeCouponState.status !== "idle" ? removeCouponState : applyCouponState;
+
+  const [applyGiftCardState, applyGiftCard, applyingGiftCard] = useActionState(
     applyGiftCardAction,
     initialActionState
   );
-  const [, removeGiftCard] = useActionState(removeGiftCardAction, initialActionState);
-  const [creatorState, applyCreatorCode, applyingCreatorCode] = useActionState(
+  const [removeGiftCardState, removeGiftCard, removingGiftCard] = useActionState(
+    removeGiftCardAction,
+    initialActionState
+  );
+  const giftCardState = removeGiftCardState.status !== "idle" ? removeGiftCardState : applyGiftCardState;
+
+  const [applyCreatorState, applyCreatorCode, applyingCreatorCode] = useActionState(
     applyCreatorCodeAction,
     initialActionState
   );
-  const [, removeCreatorCode] = useActionState(removeCreatorCodeAction, initialActionState);
+  const [removeCreatorState, removeCreatorCode, removingCreatorCode] = useActionState(
+    removeCreatorCodeAction,
+    initialActionState
+  );
+  const creatorState = removeCreatorState.status !== "idle" ? removeCreatorState : applyCreatorState;
 
   return (
     <div className="rounded-lg border border-border p-4">
@@ -68,7 +82,12 @@ export function BasketDiscounts({
                   <input type="hidden" name="coupon_code" value={coupon.code} />
                   <Badge variant="outline" className="gap-1 pr-1">
                     {coupon.code}
-                    <button type="submit" aria-label={`Remove coupon ${coupon.code}`}>
+                    <button
+                      type="submit"
+                      disabled={removingCoupon}
+                      aria-label={`Remove coupon ${coupon.code}`}
+                      className="rounded-full opacity-60 transition-opacity hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-1 disabled:pointer-events-none"
+                    >
                       <X className="size-3" />
                     </button>
                   </Badge>
@@ -78,7 +97,7 @@ export function BasketDiscounts({
           )}
           <form action={applyCoupon} className="flex gap-2">
             <input type="hidden" name="basketIdent" value={basketIdent} />
-            <Input name="coupon_code" placeholder="Coupon code" className="flex-1" />
+            <Input name="coupon_code" placeholder="Coupon code" aria-label="Coupon code" className="flex-1" />
             <Button type="submit" size="sm" disabled={applyingCoupon}>
               Apply
             </Button>
@@ -95,7 +114,12 @@ export function BasketDiscounts({
                   <input type="hidden" name="card_number" value={card.card_number} />
                   <Badge variant="outline" className="gap-1 pr-1 font-mono">
                     {card.card_number}
-                    <button type="submit" aria-label="Remove gift card">
+                    <button
+                      type="submit"
+                      disabled={removingGiftCard}
+                      aria-label="Remove gift card"
+                      className="rounded-full opacity-60 transition-opacity hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-1 disabled:pointer-events-none"
+                    >
                       <X className="size-3" />
                     </button>
                   </Badge>
@@ -105,7 +129,12 @@ export function BasketDiscounts({
           )}
           <form action={applyGiftCard} className="flex gap-2">
             <input type="hidden" name="basketIdent" value={basketIdent} />
-            <Input name="card_number" placeholder="Gift card number" className="flex-1 font-mono" />
+            <Input
+              name="card_number"
+              placeholder="Gift card number"
+              aria-label="Gift card number"
+              className="flex-1 font-mono"
+            />
             <Button type="submit" size="sm" disabled={applyingGiftCard}>
               Apply
             </Button>
@@ -120,14 +149,14 @@ export function BasketDiscounts({
               <Badge variant="outline" className="font-mono">
                 {creatorCode}
               </Badge>
-              <Button type="submit" size="xs" variant="outline">
+              <Button type="submit" size="xs" variant="outline" disabled={removingCreatorCode}>
                 Remove
               </Button>
             </form>
           ) : (
             <form action={applyCreatorCode} className="flex gap-2">
               <input type="hidden" name="basketIdent" value={basketIdent} />
-              <Input name="creator_code" placeholder="Creator code" className="flex-1" />
+              <Input name="creator_code" placeholder="Creator code" aria-label="Creator code" className="flex-1" />
               <Button type="submit" size="sm" disabled={applyingCreatorCode}>
                 Apply
               </Button>

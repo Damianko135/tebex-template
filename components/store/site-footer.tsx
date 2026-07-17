@@ -23,9 +23,9 @@ export function SiteFooter({
         <div className="space-y-3">
           <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">Shop</p>
           <ul className="space-y-2 text-sm">
-            <li><Link href="/categories" className="hover:text-primary">Categories</Link></li>
-            <li><Link href="/packages" className="hover:text-primary">All packages</Link></li>
-            <li><Link href="/basket" className="hover:text-primary">Basket</Link></li>
+            <li><Link href="/categories" className="transition-colors hover:text-primary">Categories</Link></li>
+            <li><Link href="/packages" className="transition-colors hover:text-primary">All packages</Link></li>
+            <li><Link href="/basket" className="transition-colors hover:text-primary">Basket</Link></li>
           </ul>
         </div>
 
@@ -35,7 +35,7 @@ export function SiteFooter({
             <ul className="space-y-2 text-sm">
               {pages.map((page) => (
                 <li key={page.id}>
-                  <Link href={`/pages/${page.slug}`} className="hover:text-primary">
+                  <Link href={`/pages/${page.slug}`} className="transition-colors hover:text-primary">
                     {page.title}
                   </Link>
                 </li>
@@ -47,14 +47,14 @@ export function SiteFooter({
         <div className="space-y-3">
           <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">Account</p>
           <ul className="space-y-2 text-sm">
-            <li><Link href="/account/sign-in" className="hover:text-primary">Sign in</Link></li>
+            <li><Link href="/account/sign-in" className="transition-colors hover:text-primary">Sign in</Link></li>
           </ul>
         </div>
       </div>
 
       <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-2 border-t border-border px-4 py-5 text-xs text-muted-foreground sm:px-6">
         <span>© {new Date().getFullYear()} {storeName}. Powered by Tebex.</span>
-        <Link href="/admin" className="hover:text-foreground">
+        <Link href="/admin" className="transition-colors hover:text-foreground">
           Store admin
         </Link>
       </div>

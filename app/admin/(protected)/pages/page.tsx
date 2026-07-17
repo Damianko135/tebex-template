@@ -15,12 +15,12 @@ export default async function PagesListPage() {
     <div className="space-y-6">
       <PageHeader
         crumbs={[{ label: "Dashboard", href: "/admin" }, { label: "Pages" }]}
-        title="CMS pages"
+        title="Pages"
         description="Custom pages defined for your webstore."
       />
 
       {!result.ok ? (
-        <ErrorPanel error={result.error} />
+        <ErrorPanel error={result.error} audience="admin" />
       ) : !result.data.data || result.data.data.length === 0 ? (
         <EmptyState
           icon={FileText}

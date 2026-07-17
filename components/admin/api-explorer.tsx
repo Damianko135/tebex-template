@@ -19,12 +19,17 @@ import { cn } from "@/lib/utils";
 import { EmptyState } from "@/components/empty-state";
 import { JSONViewer } from "./json-viewer";
 
+// HTTP-method color coding (GET blue, POST green, PUT/PATCH amber, DELETE
+// red) is a convention borrowed from tools like Postman/Swagger, not a
+// themeable brand or semantic-state color - every entry is a fixed Tailwind
+// palette color, not a theme token, so this scheme reads the same
+// regardless of what a merchant sets destructive/success/warning to.
 const METHOD_TONE: Record<string, string> = {
   GET: "border-transparent bg-sky-500/15 text-sky-600 dark:text-sky-400",
-  POST: "border-transparent bg-emerald-500/15 text-emerald-600 dark:text-emerald-400",
+  POST: "border-transparent bg-green-500/15 text-green-600 dark:text-green-400",
   PUT: "border-transparent bg-amber-500/15 text-amber-600 dark:text-amber-400",
   PATCH: "border-transparent bg-amber-500/15 text-amber-600 dark:text-amber-400",
-  DELETE: "border-transparent bg-destructive/15 text-destructive",
+  DELETE: "border-transparent bg-red-500/15 text-red-600 dark:text-red-400",
 };
 
 function MethodBadge({ method }: { method: string }) {
@@ -61,6 +66,7 @@ export function ApiExplorer({ endpoints }: { endpoints: EndpointManifestEntry[] 
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             placeholder="Search endpoints..."
+            aria-label="Search endpoints"
             className="pl-8"
           />
         </div>
@@ -74,7 +80,7 @@ export function ApiExplorer({ endpoints }: { endpoints: EndpointManifestEntry[] 
                 type="button"
                 onClick={() => setSelectedId(endpoint.operationId)}
                 className={cn(
-                  "flex w-full flex-col gap-1 rounded-md px-2.5 py-2 text-left text-sm transition-colors hover:bg-muted",
+                  "flex w-full flex-col gap-1 rounded-md px-2.5 py-2 text-left text-sm transition-colors outline-none hover:bg-muted focus-visible:bg-muted focus-visible:ring-3 focus-visible:ring-ring/50",
                   selected?.operationId === endpoint.operationId && "bg-muted"
                 )}
               >

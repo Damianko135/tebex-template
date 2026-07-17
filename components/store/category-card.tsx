@@ -29,7 +29,7 @@ export function CategoryCard({
         {category.image_url ? (
           <Image
             src={category.image_url}
-            alt={category.name ?? ""}
+            alt={category.name ?? "Category image"}
             fill
             unoptimized
             className="object-cover transition-transform duration-300 ease-out group-hover:scale-105"
@@ -40,11 +40,17 @@ export function CategoryCard({
         {/* Text size responds to the card's own rendered width (auto-fill
             grid, see app/(store)/page.tsx), not the viewport - a narrow
             viewport can still produce a wide card, and vice versa. */}
+        {/* Fixed black/white, not theme tokens: this is a legibility scrim
+            over an arbitrary photo, not themed chrome - it needs to stay
+            dark regardless of light/dark mode so the white text on top
+            stays readable. `from-foreground/70` would invert in dark mode
+            (foreground is near-white there), producing a near-invisible
+            light-on-light scrim. */}
         <div className="relative z-10 bg-linear-to-t from-black/70 to-transparent p-4 pt-10">
           <p className="font-heading text-white @sm/ccard:text-lg">{category.name}</p>
           {category.packages && (
             <Badge variant="outline" className="mt-1 border-white/30 text-white/90">
-              {category.packages.length} {category.packages.length === 1 ? "item" : "items"}
+              {category.packages.length} {category.packages.length === 1 ? "package" : "packages"}
             </Badge>
           )}
         </div>

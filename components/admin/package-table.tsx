@@ -53,7 +53,7 @@ export function PackageTable({
               pkg.category ? (
                 <Link
                   href={`/admin/categories/${pkg.category.id}`}
-                  className="text-muted-foreground hover:text-foreground hover:underline"
+                  className="text-muted-foreground transition-colors hover:text-foreground hover:underline"
                 >
                   {pkg.category.name}
                 </Link>

@@ -30,7 +30,7 @@ export async function addToBasketAction(
   formData: FormData
 ): Promise<ActionState> {
   const packageId = stringField(formData, "package_id");
-  if (!packageId) return { status: "error", message: "Missing package." };
+  if (!packageId) return { status: "error", message: "Select a package to add." };
   const quantity = Number(formData.get("quantity") ?? 1) || 1;
   const dynamic = formData.get("dynamic") === "on";
 
@@ -51,7 +51,7 @@ export async function removeFromBasketAction(
 ): Promise<ActionState> {
   const basketIdent = stringField(formData, "basketIdent");
   const packageId = stringField(formData, "package_id");
-  if (!basketIdent || !packageId) return { status: "error", message: "Missing basket or package." };
+  if (!basketIdent || !packageId) return { status: "error", message: "We couldn't find that basket item." };
 
   const result = await removeBasketPackage(basketIdent, packageId);
   if (!result.ok) return { status: "error", message: result.error.message };
@@ -65,7 +65,7 @@ export async function updateBasketQuantityAction(
 ): Promise<ActionState> {
   const basketIdent = stringField(formData, "basketIdent");
   const packageId = stringField(formData, "package_id");
-  if (!basketIdent || !packageId) return { status: "error", message: "Missing basket or package." };
+  if (!basketIdent || !packageId) return { status: "error", message: "We couldn't find that basket item." };
   const quantity = Number(formData.get("quantity") ?? 1) || 1;
 
   const result = await updateBasketPackageQuantity(basketIdent, packageId, quantity);
@@ -94,7 +94,7 @@ export async function removeCouponAction(
 ): Promise<ActionState> {
   const basketIdent = stringField(formData, "basketIdent");
   const couponCode = stringField(formData, "coupon_code");
-  if (!basketIdent || !couponCode) return { status: "error", message: "Missing coupon." };
+  if (!basketIdent || !couponCode) return { status: "error", message: "We couldn't find that coupon." };
 
   const result = await removeCoupon(basketIdent, couponCode);
   if (!result.ok) return { status: "error", message: result.error.message };
@@ -122,7 +122,7 @@ export async function removeGiftCardAction(
 ): Promise<ActionState> {
   const basketIdent = stringField(formData, "basketIdent");
   const cardNumber = stringField(formData, "card_number");
-  if (!basketIdent || !cardNumber) return { status: "error", message: "Missing gift card." };
+  if (!basketIdent || !cardNumber) return { status: "error", message: "We couldn't find that gift card." };
 
   const result = await removeGiftCard(basketIdent, cardNumber);
   if (!result.ok) return { status: "error", message: result.error.message };
@@ -149,7 +149,7 @@ export async function removeCreatorCodeAction(
   formData: FormData
 ): Promise<ActionState> {
   const basketIdent = stringField(formData, "basketIdent");
-  if (!basketIdent) return { status: "error", message: "Missing basket." };
+  if (!basketIdent) return { status: "error", message: "We couldn't find your basket." };
 
   const result = await removeCreatorCode(basketIdent);
   if (!result.ok) return { status: "error", message: result.error.message };

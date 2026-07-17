@@ -27,6 +27,10 @@ function SheetOverlay({ className, ...props }: SheetPrimitive.Backdrop.Props) {
   return (
     <SheetPrimitive.Backdrop
       data-slot="sheet-overlay"
+      // Fixed black, not a theme token: an overlay scrim must always darken
+      // the page behind it in both light and dark mode. `bg-foreground/10`
+      // would invert in dark mode (foreground is near-white there),
+      // lightening the backdrop instead of dimming it.
       className={cn(
         "fixed inset-0 z-50 bg-black/10 transition-opacity duration-150 data-ending-style:opacity-0 data-starting-style:opacity-0 supports-backdrop-filter:backdrop-blur-xs",
         className

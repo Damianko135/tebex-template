@@ -1,11 +1,15 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ChevronRight, ImageOff, Users } from "lucide-react";
+import { Users } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { AddToBasketForm } from "@/components/store/add-to-basket-form";
+import { PackageGallery } from "@/components/store/package-gallery";
+import { StorePage } from "@/components/store/page-container";
+import { StoreBreadcrumb } from "@/components/store/store-breadcrumb";
+import { TrustSignals } from "@/components/store/trust-signals";
 import { ErrorPanel } from "@/components/error-panel";
 import { formatCurrency, formatDate, stripHtml } from "@/lib/format";
 import { getPackage } from "@/lib/tebex/queries";
@@ -31,9 +35,16 @@ export default async function PackageDetailPage({ params }: PackagePageProps) {
   const result = await getPackage(packageId);
   if (!result.ok) {
     return (
-      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
-        <ErrorPanel error={result.error} />
-      </div>
+      <StorePage>
+        <ErrorPanel
+          error={result.error}
+          action={
+            <Button size="sm" variant="outline" render={<Link href={`/packages/${packageId}`} />}>
+              Try again
+            </Button>
+          }
+        />
+      </StorePage>
     );
   }
 
@@ -45,47 +56,19 @@ export default async function PackageDetailPage({ params }: PackagePageProps) {
   const isExpired = pkg.expiration_date ? new Date(pkg.expiration_date) < new Date() : false;
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
-      <div className="mb-6 flex items-center gap-1 text-sm text-muted-foreground">
-        <Link href="/packages" className="hover:text-foreground">
-          Packages
-        </Link>
-        <ChevronRight className="size-3.5" />
-        {pkg.category && (
-          <>
-            <Link href={`/categories/${pkg.category.id}`} className="hover:text-foreground">
-              {pkg.category.name}
-            </Link>
-            <ChevronRight className="size-3.5" />
-          </>
-        )}
-        <span className="text-foreground">{pkg.name}</span>
-      </div>
+    <StorePage>
+      <StoreBreadcrumb
+        crumbs={[
+          { label: "Packages", href: "/packages" },
+          ...(pkg.category
+            ? [{ label: pkg.category.name ?? "", href: `/categories/${pkg.category.id}` }]
+            : []),
+          { label: pkg.name ?? "" },
+        ]}
+      />
 
       <div className="grid grid-cols-1 gap-10 lg:grid-cols-2">
-        <div className="space-y-3">
-          <div className="relative aspect-square overflow-hidden rounded-xl border border-border bg-muted">
-            {gallery[0]?.url ? (
-              <Image src={gallery[0].url} alt={pkg.name ?? ""} fill unoptimized className="object-cover" />
-            ) : (
-              <ImageOff className="absolute inset-0 m-auto size-10 text-muted-foreground/40" />
-            )}
-          </div>
-          {gallery.length > 1 && (
-            <div className="grid grid-cols-4 gap-2">
-              {gallery.slice(1, 5).map((media, index) => (
-                <div
-                  key={media.url ?? `media-${index}`}
-                  className="relative aspect-square overflow-hidden rounded-md border border-border bg-muted"
-                >
-                  {media.url && (
-                    <Image src={media.url} alt={media.name ?? ""} fill unoptimized className="object-cover" />
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+        <PackageGallery gallery={gallery} alt={pkg.name ?? "Package image"} />
 
         <div className="space-y-5">
           <div className="space-y-2">
@@ -99,10 +82,14 @@ export default async function PackageDetailPage({ params }: PackagePageProps) {
 
           <div className="flex items-baseline gap-3">
             {pkg.total_price !== undefined && (
-              <span className="text-3xl font-semibold">{formatCurrency(pkg.total_price, pkg.currency)}</span>
+              <span className="text-3xl font-semibold">
+                {hasDiscount && <span className="sr-only">Sale price: </span>}
+                {formatCurrency(pkg.total_price, pkg.currency)}
+              </span>
             )}
             {hasDiscount && pkg.base_price !== undefined && (
               <span className="text-lg text-muted-foreground line-through">
+                <span className="sr-only">Original price: </span>
                 {formatCurrency(pkg.base_price, pkg.currency)}
               </span>
             )}
@@ -116,12 +103,15 @@ export default async function PackageDetailPage({ params }: PackagePageProps) {
               No longer available
             </Badge>
           ) : (
-            <AddToBasketForm
-              packageId={pkg.id ?? ""}
-              size="lg"
-              showQuantity={!pkg.disable_quantity}
-              disableQuantity={pkg.disable_quantity}
-            />
+            <div className="space-y-3">
+              <AddToBasketForm
+                packageId={pkg.id ?? ""}
+                size="lg"
+                showQuantity={!pkg.disable_quantity}
+                disableQuantity={pkg.disable_quantity}
+              />
+              <TrustSignals />
+            </div>
           )}
 
           {pkg.description && (
@@ -140,10 +130,10 @@ export default async function PackageDetailPage({ params }: PackagePageProps) {
             {pkg.expiration_date && !isExpired && (
               <span>Available until {formatDate(pkg.expiration_date)}</span>
             )}
-            {pkg.disable_gifting && <span>Gifting not available for this package</span>}
+            {pkg.disable_gifting && <span>Gifting is unavailable for this package</span>}
           </div>
         </div>
       </div>
-    </div>
+    </StorePage>
   );
 }

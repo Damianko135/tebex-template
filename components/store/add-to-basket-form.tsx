@@ -1,8 +1,9 @@
 "use client";
 
-import { useActionState, useState } from "react";
-import { Minus, Plus, ShoppingCart } from "lucide-react";
+import { useActionState, useEffect, useState } from "react";
+import { Check, Minus, Plus, ShoppingCart } from "lucide-react";
 
+import { ActionFeedback } from "@/components/action-feedback";
 import { Button } from "@/components/ui/button";
 import { initialActionState } from "@/lib/action-state";
 import { addToBasketAction } from "@/lib/store/actions";
@@ -23,6 +24,28 @@ export function AddToBasketForm({
 }) {
   const [state, action, isPending] = useActionState(addToBasketAction, initialActionState);
   const [quantity, setQuantity] = useState(1);
+  const [justAdded, setJustAdded] = useState(false);
+
+  // Surfaces a brief "Added" confirmation on the button itself, since this
+  // form is used in tight card layouts where a full alert would be too
+  // heavy - see components/action-feedback.tsx's "inline" variant, which
+  // otherwise only ever renders on error. `useActionState` returns a new
+  // `state` object on every resolution (even repeated identical results),
+  // so tracking the previous object via the "adjust state during render"
+  // pattern - rather than diffing `status` in an effect - reliably
+  // re-triggers the confirmation on each successful click, not just the
+  // first. See https://react.dev/reference/react/useState#storing-information-from-previous-renders
+  const [prevState, setPrevState] = useState(state);
+  if (state !== prevState) {
+    setPrevState(state);
+    if (state.status === "success") setJustAdded(true);
+  }
+
+  useEffect(() => {
+    if (!justAdded) return;
+    const timer = setTimeout(() => setJustAdded(false), 1600);
+    return () => clearTimeout(timer);
+  }, [justAdded]);
 
   return (
     <form action={action} className={cn("space-y-1.5", className)}>
@@ -53,11 +76,14 @@ export function AddToBasketForm({
           </div>
         )}
         <Button type="submit" size={size} disabled={isPending} className="flex-1 gap-1.5">
-          <ShoppingCart className="size-4" />
-          {isPending ? "Adding..." : "Add to basket"}
+          {justAdded ? <Check className="size-4" /> : <ShoppingCart className="size-4" />}
+          {isPending ? "Adding..." : justAdded ? "Added" : "Add to basket"}
         </Button>
       </div>
-      {state.status === "error" && <p className="text-xs text-destructive">{state.message}</p>}
+      <span className="sr-only" role="status" aria-live="polite">
+        {justAdded ? "Added to basket." : ""}
+      </span>
+      <ActionFeedback state={state} variant="inline" />
     </form>
   );
 }

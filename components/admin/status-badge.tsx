@@ -21,8 +21,8 @@ export function BooleanBadge({ value, trueLabel, falseLabel }: {
 
 const TONE_CLASSES = {
   neutral: "",
-  success: "border-transparent bg-emerald-500/15 text-emerald-600 dark:text-emerald-400",
-  warning: "border-transparent bg-amber-500/15 text-amber-600 dark:text-amber-400",
+  success: "border-transparent bg-success/15 text-success",
+  warning: "border-transparent bg-warning/15 text-warning",
   danger: "border-transparent bg-destructive/15 text-destructive",
 } as const;
 

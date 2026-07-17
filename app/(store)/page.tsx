@@ -5,8 +5,10 @@ import { ArrowRight } from "lucide-react";
 
 import { CategoryCard } from "@/components/store/category-card";
 import { PackageCard } from "@/components/store/package-card";
+import { SectionHeader } from "@/components/store/section-header";
 import { StoreSidebarModule } from "@/components/store/sidebar-module-card";
 import { AddToBasketForm } from "@/components/store/add-to-basket-form";
+import { ErrorPanel } from "@/components/error-panel";
 import { Button } from "@/components/ui/button";
 import { formatCurrency } from "@/lib/format";
 import {
@@ -35,12 +37,8 @@ export default async function HomePage() {
 
   if (!webstoreResult.ok) {
     return (
-      <div className="mx-auto max-w-2xl px-4 py-24 text-center">
-        <h1 className="text-2xl font-semibold">Store not connected</h1>
-        <p className="mt-2 text-muted-foreground">
-          Set <code className="font-mono">TEBEX_STORE_TOKEN</code> in your environment to bring this
-          storefront to life.
-        </p>
+      <div className="mx-auto max-w-2xl px-4 py-24">
+        <ErrorPanel error={webstoreResult.error} />
       </div>
     );
   }
@@ -123,12 +121,7 @@ export default async function HomePage() {
 
       {topLevelCategories.length > 0 && (
         <section className="mx-auto max-w-7xl px-4 sm:px-6">
-          <div className="mb-8 flex items-end justify-between">
-            <h2 className="font-heading text-2xl">Shop by category</h2>
-            <Link href="/categories" className="text-sm text-primary hover:underline">
-              View all
-            </Link>
-          </div>
+          <SectionHeader title="Shop by category" linkHref="/categories" linkLabel="View all" />
           <div className="grid grid-cols-[repeat(auto-fill,minmax(11rem,1fr))] gap-5">
             {topLevelCategories.map((category, index) => (
               <CategoryCard key={category.id} category={category} style={revealDelay(index)} />
@@ -139,12 +132,7 @@ export default async function HomePage() {
 
       {newArrivals.length > 0 && (
         <section className="mx-auto max-w-7xl px-4 sm:px-6">
-          <div className="mb-8 flex items-end justify-between">
-            <h2 className="font-heading text-2xl">New arrivals</h2>
-            <Link href="/packages" className="text-sm text-primary hover:underline">
-              Browse all packages
-            </Link>
-          </div>
+          <SectionHeader title="New arrivals" linkHref="/packages" linkLabel="Browse all packages" />
           <div className="grid grid-cols-[repeat(auto-fill,minmax(11rem,1fr))] gap-5">
             {newArrivals.map((pkg, index) => (
               <PackageCard key={pkg.id} pkg={pkg} style={revealDelay(index)} />

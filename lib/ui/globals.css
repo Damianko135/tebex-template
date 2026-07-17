@@ -47,6 +47,11 @@
   --color-input: var(--input);
   --color-border: var(--border);
   --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
   --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);
   --color-muted-foreground: var(--muted-foreground);
@@ -104,6 +109,15 @@
   }
   html {
     @apply font-sans;
+  }
+
+  /* Consistent, on-brand focus ring for plain links (card images/titles,
+     nav, footer, table rows, ...) that don't go through a styled
+     components/ui/* primitive - those already define their own
+     focus-visible treatment and carry a `data-slot` attribute, so this is
+     scoped to skip them rather than layering a second ring on top. */
+  a:focus-visible:not([data-slot]) {
+    @apply rounded-xs outline-2 outline-offset-2 outline-ring;
   }
 
   /* Global safety net: honor prefers-reduced-motion even for animations that

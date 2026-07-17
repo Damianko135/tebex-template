@@ -4,8 +4,8 @@ import { ErrorPanel } from "@/components/error-panel";
 import { JSONViewer } from "@/components/admin/json-viewer";
 import { PageHeader } from "@/components/admin/page-header";
 import { PropertyGrid } from "@/components/admin/property-grid";
+import { SectionCard } from "@/components/admin/section-card";
 import { BooleanBadge } from "@/components/admin/status-badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getBasket } from "@/lib/tebex/queries";
 
 import {
@@ -38,7 +38,7 @@ export default async function BasketDetailPage({
           ]}
           title={basketIdent}
         />
-        <ErrorPanel error={result.error} />
+        <ErrorPanel error={result.error} audience="admin" />
       </div>
     );
   }
@@ -96,32 +96,22 @@ export default async function BasketDetailPage({
         }
       />
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Properties</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <PropertyGrid
-            value={basket}
-            exclude={["packages", "coupons", "giftcards", "links"]}
-            columns={3}
-          />
-        </CardContent>
-      </Card>
+      <SectionCard title="Properties">
+        <PropertyGrid
+          value={basket}
+          exclude={["packages", "coupons", "giftcards", "links"]}
+          columns={3}
+        />
+      </SectionCard>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Packages</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <BasketPackagesTable
-            basketIdent={basketIdent}
-            packages={basket.packages ?? []}
-            currency={basket.currency}
-          />
-          <AddPackageForm basketIdent={basketIdent} />
-        </CardContent>
-      </Card>
+      <SectionCard title="Packages" contentClassName="space-y-4">
+        <BasketPackagesTable
+          basketIdent={basketIdent}
+          packages={basket.packages ?? []}
+          currency={basket.currency}
+        />
+        <AddPackageForm basketIdent={basketIdent} />
+      </SectionCard>
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <CouponPanel basketIdent={basketIdent} coupons={basket.coupons ?? []} />

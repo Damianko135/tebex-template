@@ -1,9 +1,11 @@
 import "server-only";
 
+import { cache } from "react";
 import type { components } from "tebex-headless";
 
 import { createBasket } from "@/lib/tebex/mutations";
 import { getBasket } from "@/lib/tebex/queries";
+import type { TebexResult } from "@/lib/tebex/queries";
 import { getSiteOrigin } from "@/lib/site";
 
 import { getBasketIdent, setBasketIdent } from "./basket-cookie";
@@ -11,14 +13,27 @@ import { getBasketIdent, setBasketIdent } from "./basket-cookie";
 export type Basket = components["schemas"]["Basket"];
 
 /** Reads the visitor's basket if one already exists. Never creates one, so
- * it's safe to call from a plain Server Component render. */
-export async function getCurrentBasket(): Promise<Basket | null> {
+ * it's safe to call from a plain Server Component render.
+ *
+ * Returns `{ ok: true, basket: null }` when the visitor genuinely has no
+ * basket yet (no cookie set) - distinct from `{ ok: false }`, which means
+ * the API call itself failed. Callers must not treat the two the same way:
+ * collapsing a failed fetch into "no basket" would make a shopper with a
+ * real, non-empty basket see "Your basket is empty" on a transient API
+ * blip.
+ *
+ * Wrapped in `cache()` since the header (`StorefrontShell`) and the page
+ * body (`/basket`, `/checkout/success`) each call this independently in the
+ * same request - without memoization, two separate fetches could
+ * independently succeed/fail, producing a page where the header shows a
+ * normal cart badge while the body shows an error, or vice versa. */
+export const getCurrentBasket = cache(async (): Promise<TebexResult<Basket | null>> => {
   const ident = await getBasketIdent();
-  if (!ident) return null;
+  if (!ident) return { ok: true, data: null };
   const result = await getBasket(ident);
-  if (!result.ok) return null;
-  return result.data.data ?? null;
-}
+  if (!result.ok) return result;
+  return { ok: true, data: result.data.data ?? null };
+});
 
 /** Resolves the visitor's basket identifier, creating a new basket (and
  * setting its cookie) if none exists yet or the stored one is no longer

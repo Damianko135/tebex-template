@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 import { ExternalLink, LogIn } from "lucide-react";
 
+import { ActionFeedback } from "@/components/action-feedback";
 import { Button } from "@/components/ui/button";
 import { initialActionState } from "@/lib/action-state";
 import { getSignInLinksAction } from "@/lib/store/actions";
@@ -15,10 +16,17 @@ interface AuthProvider {
 export function SignInPanel() {
   const [state, action, isPending] = useActionState(getSignInLinksAction, initialActionState);
   const providers = state.status === "success" ? ((state.data as { data?: AuthProvider[] })?.data ?? []) : [];
+  // A successful fetch that returns zero providers is a dead end, not a
+  // retry-able failure - without this check it looks identical to the
+  // untouched idle state, so the button just sits there clickable forever
+  // with no explanation of why nothing ever happens.
+  const noProvidersConfigured = state.status === "success" && providers.length === 0;
 
   return (
     <div className="space-y-4">
-      {providers.length === 0 ? (
+      {noProvidersConfigured ? (
+        <p className="text-sm text-muted-foreground">No sign-in methods are available for this store yet.</p>
+      ) : providers.length === 0 ? (
         <form action={action}>
           <Button type="submit" size="lg" disabled={isPending} className="gap-2">
             <LogIn className="size-4" />
@@ -41,7 +49,7 @@ export function SignInPanel() {
           ))}
         </div>
       )}
-      {state.status === "error" && <p className="text-sm text-destructive">{state.message}</p>}
+      <ActionFeedback state={state} variant="inline" className="text-sm" />
     </div>
   );
 }

@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Minus, Plus, Trash2 } from "lucide-react";
 import type { components } from "tebex-headless";
 
+import { ActionFeedback } from "@/components/action-feedback";
 import { Button } from "@/components/ui/button";
 import { initialActionState } from "@/lib/action-state";
 import { formatCurrency } from "@/lib/format";
@@ -24,7 +25,7 @@ function QuantityStepper({
   quantity: number;
   disabled?: boolean;
 }) {
-  const [, action, isPending] = useActionState(updateBasketQuantityAction, initialActionState);
+  const [state, action, isPending] = useActionState(updateBasketQuantityAction, initialActionState);
 
   if (disabled) {
     return <span className="w-16 text-center text-sm">Qty {quantity}</span>;
@@ -39,42 +40,46 @@ function QuantityStepper({
   }
 
   return (
-    <div className="flex items-center rounded-md border border-border">
-      <Button
-        type="button"
-        variant="ghost"
-        size="icon-sm"
-        disabled={isPending || quantity <= 1}
-        onClick={() => step(-1)}
-        aria-label="Decrease quantity"
-      >
-        <Minus className="size-3.5" />
-      </Button>
-      <span className="w-8 text-center text-sm">{quantity}</span>
-      <Button
-        type="button"
-        variant="ghost"
-        size="icon-sm"
-        disabled={isPending}
-        onClick={() => step(1)}
-        aria-label="Increase quantity"
-      >
-        <Plus className="size-3.5" />
-      </Button>
+    <div className="space-y-1">
+      <div className="flex items-center rounded-md border border-border">
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon-sm"
+          disabled={isPending || quantity <= 1}
+          onClick={() => step(-1)}
+          aria-label="Decrease quantity"
+        >
+          <Minus className="size-3.5" />
+        </Button>
+        <span className="w-8 text-center text-sm">{quantity}</span>
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon-sm"
+          disabled={isPending}
+          onClick={() => step(1)}
+          aria-label="Increase quantity"
+        >
+          <Plus className="size-3.5" />
+        </Button>
+      </div>
+      <ActionFeedback state={state} variant="inline" />
     </div>
   );
 }
 
 function RemoveButton({ basketIdent, packageId }: { basketIdent: string; packageId: number }) {
-  const [, action, isPending] = useActionState(removeFromBasketAction, initialActionState);
+  const [state, action, isPending] = useActionState(removeFromBasketAction, initialActionState);
 
   return (
-    <form action={action}>
+    <form action={action} className="space-y-1">
       <input type="hidden" name="basketIdent" value={basketIdent} />
       <input type="hidden" name="package_id" value={packageId} />
       <Button type="submit" variant="ghost" size="icon-sm" disabled={isPending} aria-label="Remove item">
         <Trash2 className="size-4 text-destructive" />
       </Button>
+      <ActionFeedback state={state} variant="inline" />
     </form>
   );
 }
@@ -93,7 +98,9 @@ export function BasketPackages({
       {packages.map((pkg) => (
         <li key={pkg.id} className="flex items-center gap-4 p-4">
           <div className="relative size-16 shrink-0 overflow-hidden rounded-md border border-border bg-muted">
-            {pkg.image && <Image src={pkg.image} alt={pkg.name ?? ""} fill unoptimized className="object-cover" />}
+            {pkg.image && (
+              <Image src={pkg.image} alt={pkg.name ?? "Package image"} fill unoptimized className="object-cover" />
+            )}
           </div>
           <div className="min-w-0 flex-1">
             <Link href={`/packages/${pkg.id}`} className="font-medium hover:underline">

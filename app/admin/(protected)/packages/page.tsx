@@ -16,11 +16,11 @@ export default async function PackagesListPage() {
       <PageHeader
         crumbs={[{ label: "Dashboard", href: "/admin" }, { label: "Packages" }]}
         title="Packages"
-        description="Every package available in your webstore (excluding dynamic-category packages, which are basket-scoped)."
+        description="Every package in your webstore. Packages that only appear inside a specific basket aren't listed here."
       />
 
       {!result.ok ? (
-        <ErrorPanel error={result.error} />
+        <ErrorPanel error={result.error} audience="admin" />
       ) : !result.data.data || result.data.data.length === 0 ? (
         <EmptyState
           icon={Package}

@@ -1,32 +1,42 @@
+import Link from "next/link";
 import { Boxes } from "lucide-react";
 
 import { CategoryCard } from "@/components/store/category-card";
+import { PageHeading } from "@/components/store/page-heading";
+import { StorePage } from "@/components/store/page-container";
 import { EmptyState } from "@/components/empty-state";
+import { ErrorPanel } from "@/components/error-panel";
+import { Button } from "@/components/ui/button";
 import { getCategoriesWithPackages } from "@/lib/tebex/queries";
 
 export const dynamic = "force-dynamic";
 
 export default async function CategoriesPage() {
   const result = await getCategoriesWithPackages();
-  const categories = result.ok ? (result.data.data ?? []) : [];
-  const topLevel = categories.filter((category) => !category.parent);
+  const topLevel = result.ok ? (result.data.data ?? []).filter((category) => !category.parent) : [];
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
-      <div className="mb-8 space-y-1">
-        <h1 className="font-heading text-3xl tracking-tight">Categories</h1>
-        <p className="text-muted-foreground">Browse everything the store has to offer.</p>
-      </div>
+    <StorePage>
+      <PageHeading title="Categories" description="Browse everything the store has to offer." />
 
-      {topLevel.length === 0 ? (
+      {!result.ok ? (
+        <ErrorPanel
+          error={result.error}
+          action={
+            <Button size="sm" variant="outline" render={<Link href="/categories" />}>
+              Try again
+            </Button>
+          }
+        />
+      ) : topLevel.length === 0 ? (
         <EmptyState icon={Boxes} title="No categories yet" description="Check back soon." />
       ) : (
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+        <div className="grid grid-cols-[repeat(auto-fill,minmax(11rem,1fr))] gap-5">
           {topLevel.map((category) => (
             <CategoryCard key={category.id} category={category} />
           ))}
         </div>
       )}
-    </div>
+    </StorePage>
   );
 }

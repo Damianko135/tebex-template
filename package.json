@@ -2,6 +2,12 @@
   "name": "template",
   "version": "0.1.0",
   "private": true,
+  "description": "A Next.js App Router template that's both a customer-facing storefront and an admin dashboard for a Tebex-powered webstore.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Damianko135/tebex-template.git"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",

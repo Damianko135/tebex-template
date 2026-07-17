@@ -2,9 +2,11 @@
 
 import type { CSSProperties } from "react";
 import { useActionState, useState } from "react";
+import { ChevronRight } from "lucide-react";
 import { ColorPicker, ColorService, type IColor } from "react-color-palette";
 import "react-color-palette/css";
 
+import { ActionFeedback } from "@/components/action-feedback";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -15,6 +17,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -65,7 +68,7 @@ function ColorField({
         <PopoverTrigger
           type="button"
           aria-label={`Pick a color for ${field.label}`}
-          className="size-8 shrink-0 rounded-md border border-border"
+          className="size-8 shrink-0 rounded-md border border-border outline-none transition-shadow hover:ring-2 hover:ring-ring/30 focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
           style={{ background: value }}
         />
         <PopoverContent className="w-auto p-3">
@@ -90,35 +93,48 @@ function ColorField({
   );
 }
 
+// "Core" is open by default since it's the group nearly every store owner
+// touches (background, primary, accent, etc.); "Sidebar" and "Charts" are
+// specialist token sets most stores never customize, so they start
+// collapsed to keep the common case scannable instead of a 33-field wall.
 function ColorGroup({
   group,
   mode,
   colors,
   onColorChange,
+  defaultOpen = false,
 }: {
   group: (typeof THEME_TOKEN_GROUPS)[number];
   mode: "light" | "dark";
   colors: ThemeColors;
   onColorChange: (key: keyof ThemeColors, value: string) => void;
+  defaultOpen?: boolean;
 }) {
+  const [open, setOpen] = useState(defaultOpen);
   const fields = THEME_TOKEN_FIELDS.filter((field) => field.group === group);
   return (
-    <div className="space-y-3">
-      <h3 className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
+    <Collapsible open={open} onOpenChange={setOpen}>
+      <CollapsibleTrigger className="-m-1 flex w-full items-center gap-1.5 rounded-sm p-1 text-xs font-medium tracking-wide text-muted-foreground uppercase outline-none transition-colors hover:text-foreground focus-visible:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50">
+        <ChevronRight className={cn("size-3.5 shrink-0 transition-transform", open && "rotate-90")} />
         {group}
-      </h3>
-      <div className="grid grid-cols-1 gap-3">
-        {fields.map((field) => (
-          <ColorField
-            key={field.key}
-            mode={mode}
-            field={field}
-            value={colors[field.key]}
-            onChange={(value) => onColorChange(field.key, value)}
-          />
-        ))}
-      </div>
-    </div>
+        <span className="ml-auto font-normal normal-case text-muted-foreground/70">
+          {fields.length}
+        </span>
+      </CollapsibleTrigger>
+      <CollapsibleContent>
+        <div className="grid grid-cols-1 gap-3 pt-3">
+          {fields.map((field) => (
+            <ColorField
+              key={field.key}
+              mode={mode}
+              field={field}
+              value={colors[field.key]}
+              onChange={(value) => onColorChange(field.key, value)}
+            />
+          ))}
+        </div>
+      </CollapsibleContent>
+    </Collapsible>
   );
 }
 
@@ -126,21 +142,24 @@ function ModeTab({
   mode,
   colors,
   onColorChange,
+  className,
 }: {
   mode: "light" | "dark";
   colors: ThemeColors;
   onColorChange: (key: keyof ThemeColors, value: string) => void;
+  className?: string;
 }) {
   return (
-    <div className="space-y-6 pt-4">
+    <div className={cn("space-y-4 pt-4", className)}>
       {THEME_TOKEN_GROUPS.map((group, index) => (
-        <div key={group} className="space-y-6">
+        <div key={group} className="space-y-4">
           {index > 0 && <Separator />}
           <ColorGroup
             group={group}
             mode={mode}
             colors={colors}
             onColorChange={onColorChange}
+            defaultOpen={group === "Core"}
           />
         </div>
       ))}
@@ -178,7 +197,7 @@ function ThemePreview({
       style={style}
     >
       <div className="flex items-center justify-between border-b border-border pb-4">
-        <span className="text-lg font-semibold">Acme Store</span>
+        <span className="text-lg font-semibold">Your Store</span>
         <div className="flex items-center gap-4 text-sm text-muted-foreground">
           <span>Shop</span>
           <span>About</span>
@@ -188,10 +207,10 @@ function ThemePreview({
 
       <div className="space-y-3">
         <h1 className="text-2xl font-semibold tracking-tight">
-          Summer collection is here
+          New arrivals
         </h1>
         <p className="max-w-md text-sm text-muted-foreground">
-          Fresh styles, limited stock. Free shipping on orders over $50.
+          Browse the latest packages added to the store.
         </p>
         <div className="flex flex-wrap gap-2">
           <Button type="button">Shop now</Button>
@@ -205,9 +224,9 @@ function ThemePreview({
       </div>
 
       <Alert>
-        <AlertTitle>Limited time offer</AlertTitle>
+        <AlertTitle>Notice</AlertTitle>
         <AlertDescription>
-          Use code SUMMER20 for 20% off your first order.
+          This alert style is used for callouts and announcements.
         </AlertDescription>
       </Alert>
 
@@ -279,6 +298,10 @@ export function ThemeForm({
     setDraft((prev) => ({ ...prev, [mode]: { ...prev[mode], [key]: value } }));
   }
 
+  function handleCopyLightToDark() {
+    setDraft((prev) => ({ ...prev, dark: { ...prev.light } }));
+  }
+
   return (
     <div className="flex h-176 gap-4">
       <aside className="flex w-80 shrink-0 flex-col rounded-lg border border-border">
@@ -328,10 +351,16 @@ export function ThemeForm({
                 />
               </TabsContent>
               <TabsContent value="dark">
+                <div className="flex justify-end pt-4">
+                  <Button type="button" variant="outline" size="xs" onClick={handleCopyLightToDark}>
+                    Copy from light theme
+                  </Button>
+                </div>
                 <ModeTab
                   mode="dark"
                   colors={draft.dark}
                   onColorChange={(key, value) => handleColorChange("dark", key, value)}
+                  className="pt-3"
                 />
               </TabsContent>
             </Tabs>
@@ -351,14 +380,7 @@ export function ThemeForm({
       </aside>
 
       <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-hidden">
-        {feedback.status !== "idle" && (
-          <Alert variant={feedback.status === "error" ? "destructive" : "default"}>
-            <AlertTitle>
-              {feedback.status === "error" ? "Something went wrong" : "Saved"}
-            </AlertTitle>
-            {feedback.message && <AlertDescription>{feedback.message}</AlertDescription>}
-          </Alert>
-        )}
+        <ActionFeedback state={feedback} successTitle="Saved" />
         <div className="min-h-0 flex-1">
           <ThemePreview mode={activeMode} radius={draft.radius} colors={draft[activeMode]} />
         </div>

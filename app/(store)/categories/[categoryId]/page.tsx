@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ChevronRight } from "lucide-react";
 
 import { PackageCard } from "@/components/store/package-card";
 import { CategoryCard } from "@/components/store/category-card";
+import { StorePage } from "@/components/store/page-container";
+import { StoreBreadcrumb } from "@/components/store/store-breadcrumb";
 import { EmptyState } from "@/components/empty-state";
 import { ErrorPanel } from "@/components/error-panel";
+import { Button } from "@/components/ui/button";
 import { stripHtml } from "@/lib/format";
 import { getCategoriesWithPackages, getCategory } from "@/lib/tebex/queries";
 
@@ -31,9 +33,16 @@ export default async function CategoryDetailPage({ params }: CategoryPageProps) 
 
   if (!result.ok) {
     return (
-      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
-        <ErrorPanel error={result.error} />
-      </div>
+      <StorePage>
+        <ErrorPanel
+          error={result.error}
+          action={
+            <Button size="sm" variant="outline" render={<Link href={`/categories/${categoryId}`} />}>
+              Try again
+            </Button>
+          }
+        />
+      </StorePage>
     );
   }
   const category = result.data;
@@ -49,14 +58,11 @@ export default async function CategoryDetailPage({ params }: CategoryPageProps) 
   );
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
-      <div className="mb-2 flex items-center gap-1 text-sm text-muted-foreground">
-        <Link href="/categories" className="hover:text-foreground">
-          Categories
-        </Link>
-        <ChevronRight className="size-3.5" />
-        <span className="text-foreground">{category.name}</span>
-      </div>
+    <StorePage>
+      <StoreBreadcrumb
+        className="mb-2"
+        crumbs={[{ label: "Categories", href: "/categories" }, { label: category.name ?? "" }]}
+      />
       <div className="mb-8 space-y-1">
         <h1 className="font-heading text-3xl tracking-tight">{category.name}</h1>
         {category.description && (
@@ -68,7 +74,7 @@ export default async function CategoryDetailPage({ params }: CategoryPageProps) 
       </div>
 
       {subcategories.length > 0 && (
-        <div className="mb-10 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+        <div className="mb-10 grid grid-cols-[repeat(auto-fill,minmax(11rem,1fr))] gap-5">
           {subcategories.map((sub) => (
             <CategoryCard key={sub.id} category={sub} />
           ))}
@@ -78,12 +84,12 @@ export default async function CategoryDetailPage({ params }: CategoryPageProps) 
       {!category.packages || category.packages.length === 0 ? (
         <EmptyState title="No packages in this category yet" description="Check back soon." />
       ) : (
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+        <div className="grid grid-cols-[repeat(auto-fill,minmax(11rem,1fr))] gap-5">
           {category.packages.map((pkg) => (
             <PackageCard key={pkg.id} pkg={pkg} />
           ))}
         </div>
       )}
-    </div>
+    </StorePage>
   );
 }

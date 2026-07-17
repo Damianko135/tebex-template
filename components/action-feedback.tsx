@@ -25,7 +25,16 @@ export function ActionFeedback({
 }) {
   if (variant === "inline") {
     if (state.status !== "error") return null;
-    return <p className={cn("text-xs text-destructive", className)}>{state.message}</p>;
+    // `role="alert"` gives this the same automatic screen-reader
+    // announcement the full `Alert` variant gets for free via
+    // components/ui/alert.tsx - without it, an error surfaced through this
+    // compact variant (basket quantity/remove, coupon forms, sign-in) is
+    // silent to anyone not visually scanning the page for it.
+    return (
+      <p role="alert" className={cn("text-xs text-destructive", className)}>
+        {state.message}
+      </p>
+    );
   }
 
   if (state.status === "idle") return null;

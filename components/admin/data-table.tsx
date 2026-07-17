@@ -1,17 +1,11 @@
 "use client";
 
 import { type ReactNode, useMemo, useState } from "react";
-import { ArrowDown, ArrowUp, ArrowUpDown, Search } from "lucide-react";
+import { ArrowDown, ArrowUp, ArrowUpDown, ChevronLeftIcon, ChevronRightIcon, Search } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
+import { Pagination, PaginationContent, PaginationItem } from "@/components/ui/pagination";
 import {
   Table,
   TableBody,
@@ -100,6 +94,7 @@ export function DataTable<T>({
               setPage(0);
             }}
             placeholder={searchPlaceholder}
+            aria-label={searchPlaceholder}
             className="pl-8"
           />
         </div>
@@ -119,7 +114,7 @@ export function DataTable<T>({
                         <button
                           type="button"
                           onClick={() => toggleSort(column.id)}
-                          className="inline-flex items-center gap-1 hover:text-foreground"
+                          className="-m-1 inline-flex items-center gap-1 rounded-sm p-1 transition-colors hover:text-foreground focus-visible:text-foreground focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-1"
                         >
                           {column.header}
                           {sort?.id === column.id ? (
@@ -182,15 +177,17 @@ export function DataTable<T>({
               <Pagination className="mx-0 w-auto">
                 <PaginationContent>
                   <PaginationItem>
-                    <PaginationPrevious
-                      href="#"
-                      className={cn(currentPage === 0 && "pointer-events-none opacity-50")}
-                      aria-disabled={currentPage === 0}
-                      onClick={(event) => {
-                        event.preventDefault();
-                        setPage((p) => Math.max(0, p - 1));
-                      }}
-                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      className="pl-1.5!"
+                      disabled={currentPage === 0}
+                      onClick={() => setPage((p) => Math.max(0, p - 1))}
+                      aria-label="Go to previous page"
+                    >
+                      <ChevronLeftIcon data-icon="inline-start" />
+                      <span className="hidden sm:block">Previous</span>
+                    </Button>
                   </PaginationItem>
                   <PaginationItem>
                     <span className="px-2 whitespace-nowrap">
@@ -198,15 +195,17 @@ export function DataTable<T>({
                     </span>
                   </PaginationItem>
                   <PaginationItem>
-                    <PaginationNext
-                      href="#"
-                      className={cn(currentPage >= pageCount - 1 && "pointer-events-none opacity-50")}
-                      aria-disabled={currentPage >= pageCount - 1}
-                      onClick={(event) => {
-                        event.preventDefault();
-                        setPage((p) => Math.min(pageCount - 1, p + 1));
-                      }}
-                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      className="pr-1.5!"
+                      disabled={currentPage >= pageCount - 1}
+                      onClick={() => setPage((p) => Math.min(pageCount - 1, p + 1))}
+                      aria-label="Go to next page"
+                    >
+                      <span className="hidden sm:block">Next</span>
+                      <ChevronRightIcon data-icon="inline-end" />
+                    </Button>
                   </PaginationItem>
                 </PaginationContent>
               </Pagination>

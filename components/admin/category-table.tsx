@@ -66,6 +66,7 @@ export function CategoryTable({ categories }: { categories: Category[] }) {
         (category.name?.toLowerCase().includes(query) ?? false) ||
         (category.slug?.toLowerCase().includes(query) ?? false)
       }
+      emptyTitle="No categories"
     />
   );
 }

@@ -39,7 +39,7 @@ const geistMono = Geist_Mono({
 // segments with no more specific metadata of their own (e.g. app/not-found.tsx).
 export const metadata: Metadata = {
   title: "Store",
-  description: "A storefront built on the Tebex Headless API.",
+  description: "A storefront for buying in-game items and perks.",
 };
 
 export default async function RootLayout({

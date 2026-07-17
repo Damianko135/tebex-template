@@ -4,7 +4,10 @@ import { ShoppingCart } from "lucide-react";
 import { BasketDiscounts } from "@/components/store/basket-discounts";
 import { BasketPackages } from "@/components/store/basket-packages";
 import { CheckoutLink } from "@/components/store/checkout-link";
+import { StoreBreadcrumb } from "@/components/store/store-breadcrumb";
+import { TrustSignals } from "@/components/store/trust-signals";
 import { EmptyState } from "@/components/empty-state";
+import { ErrorPanel } from "@/components/error-panel";
 import { Button } from "@/components/ui/button";
 import { formatCurrency } from "@/lib/format";
 import { getCurrentBasket } from "@/lib/store/basket";
@@ -12,7 +15,24 @@ import { getCurrentBasket } from "@/lib/store/basket";
 export const dynamic = "force-dynamic";
 
 export default async function BasketPage() {
-  const basket = await getCurrentBasket();
+  const result = await getCurrentBasket();
+
+  if (!result.ok) {
+    return (
+      <div className="mx-auto max-w-3xl px-4 py-20">
+        <ErrorPanel
+          error={result.error}
+          action={
+            <Button size="sm" variant="outline" render={<Link href="/basket" />}>
+              Try again
+            </Button>
+          }
+        />
+      </div>
+    );
+  }
+
+  const basket = result.data;
 
   if (!basket || !basket.packages || basket.packages.length === 0) {
     return (
@@ -31,6 +51,7 @@ export default async function BasketPage() {
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-14 sm:px-6">
+      <StoreBreadcrumb className="mb-2" crumbs={[{ label: "Packages", href: "/packages" }, { label: "Basket" }]} />
       <h1 className="mb-10 font-heading text-3xl tracking-tight">Your basket</h1>
 
       <div className="grid grid-cols-1 gap-10 lg:grid-cols-3">
@@ -65,9 +86,7 @@ export default async function BasketPage() {
           ) : (
             <p className="text-sm text-muted-foreground">Checkout is not available for this basket.</p>
           )}
-          <p className="text-center text-xs text-muted-foreground">
-            Secure checkout by Tebex.
-          </p>
+          <TrustSignals />
         </div>
       </div>
     </div>

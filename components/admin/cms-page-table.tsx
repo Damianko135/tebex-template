@@ -56,6 +56,7 @@ export function CMSPageTable({ pages }: { pages: CMSPage[] }) {
         (page.title?.toLowerCase().includes(query) ?? false) ||
         (page.slug?.toLowerCase().includes(query) ?? false)
       }
+      emptyTitle="No pages"
     />
   );
 }

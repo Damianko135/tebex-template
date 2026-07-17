@@ -20,7 +20,7 @@ export default async function SidebarModulesPage() {
       />
 
       {!result.ok ? (
-        <ErrorPanel error={result.error} />
+        <ErrorPanel error={result.error} audience="admin" />
       ) : !result.data.data || result.data.data.length === 0 ? (
         <EmptyState
           icon={LayoutPanelTop}

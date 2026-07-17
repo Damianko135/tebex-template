@@ -1,9 +1,10 @@
-import type { CSSProperties, ReactNode } from "react";
+import type { ReactNode } from "react";
 import type { components } from "tebex-headless";
 
 import { Card, CardAction, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { formatCurrency, formatNumber } from "@/lib/format";
+import { PROGRESS_STRIPE_STYLE } from "@/lib/ui/progress-stripe";
 
 import { JSONViewer } from "./json-viewer";
 import { PropertyGrid } from "./property-grid";
@@ -16,12 +17,6 @@ interface ModuleEnvelope {
   end_time?: string | null;
   data?: unknown;
 }
-
-const STRIPE_STYLE: CSSProperties = {
-  backgroundImage:
-    "linear-gradient(45deg, rgba(255,255,255,.15) 25%, transparent 25%, transparent 50%, rgba(255,255,255,.15) 50%, rgba(255,255,255,.15) 75%, transparent 75%, transparent)",
-  backgroundSize: "1rem 1rem",
-};
 
 function ModuleShell({
   header,
@@ -137,7 +132,7 @@ export function SidebarModuleCard({ module }: { module: ModuleEnvelope }) {
             {data.hostname}:{data.port}
           </p>
           <div className="flex items-center gap-2 text-sm">
-            <span className={data.online ? "text-emerald-600 dark:text-emerald-400" : "text-muted-foreground"}>
+            <span className={data.online ? "text-success" : "text-muted-foreground"}>
               {data.online ? "Online" : "Offline"}
             </span>
             {data.players && (
@@ -156,7 +151,7 @@ export function SidebarModuleCard({ module }: { module: ModuleEnvelope }) {
         <ModuleShell header={data.header} typeLabel="Payment goal">
           <Progress
             value={data.percentage}
-            indicatorStyle={data.bar_animated ? STRIPE_STYLE : undefined}
+            indicatorStyle={data.bar_animated ? PROGRESS_STRIPE_STYLE : undefined}
           />
           <p className="text-xs text-muted-foreground">
             {data.total != null && data.target != null
@@ -173,7 +168,7 @@ export function SidebarModuleCard({ module }: { module: ModuleEnvelope }) {
         <ModuleShell header={data.header} typeLabel="Community goal">
           <Progress
             value={data.percentage}
-            indicatorStyle={data.bar_animated ? STRIPE_STYLE : undefined}
+            indicatorStyle={data.bar_animated ? PROGRESS_STRIPE_STYLE : undefined}
           />
           <p className="text-xs text-muted-foreground">
             {data.total_payments != null && data.target != null

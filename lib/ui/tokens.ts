@@ -13,7 +13,20 @@ export interface ThemeColors {
   "muted-foreground": string;
   accent: string;
   "accent-foreground": string;
+  // destructive/success/warning each carry a `-foreground` pair, matching
+  // primary/secondary/accent, so any solid-fill use (e.g. a badge sitting
+  // directly on a photo, where the soft-tint convention below doesn't have
+  // enough contrast) has a token-safe, theme-reactive text color instead of
+  // a hardcoded white that could fail once a merchant recolors the base
+  // token. The soft-tint convention used everywhere else
+  // (bg-destructive/15 text-destructive, etc.) doesn't need these - the
+  // token itself is already the text color there.
   destructive: string;
+  "destructive-foreground": string;
+  success: string;
+  "success-foreground": string;
+  warning: string;
+  "warning-foreground": string;
   border: string;
   input: string;
   ring: string;
@@ -82,6 +95,14 @@ export const DEFAULT_THEME: Theme = {
     accent: "oklch(0.93 0.025 152)",
     "accent-foreground": "oklch(0.22 0.03 152)",
     destructive: "oklch(0.55 0.18 27)",
+    "destructive-foreground": "oklch(0.98 0.01 27)",
+    // Hue 165 (rather than primary's 152) so a success state doesn't read
+    // as "more brand green" - close enough to stay unambiguously green,
+    // far enough to be visually distinct from the accent.
+    success: "oklch(0.53 0.14 165)",
+    "success-foreground": "oklch(0.98 0.01 165)",
+    warning: "oklch(0.55 0.15 80)",
+    "warning-foreground": "oklch(0.98 0.01 80)",
     border: "oklch(0.9 0.006 85)",
     input: "oklch(0.9 0.006 85)",
     ring: "oklch(0.55 0.09 152)",
@@ -115,6 +136,20 @@ export const DEFAULT_THEME: Theme = {
     accent: "oklch(0.28 0.03 152)",
     "accent-foreground": "oklch(0.92 0.02 152)",
     destructive: "oklch(0.62 0.18 25)",
+    // Dark text, not white: at this lightness, white text on `destructive`
+    // measures ~3.7:1 (fails the 4.5:1 AA-normal minimum for small text,
+    // e.g. the "Sale" badge). Darkening `destructive` itself to fix that
+    // would break the more widely-used `text-destructive`-on-background
+    // pairing (soft-tint badges/buttons), which relies on this exact
+    // lightness. Dark text at the same darkness already used for
+    // success/warning/primary-foreground in dark mode clears 4.9:1 against
+    // the unchanged token - the correct fix, and more consistent with the
+    // adjacent tokens besides.
+    "destructive-foreground": "oklch(0.16 0.02 25)",
+    success: "oklch(0.68 0.15 165)",
+    "success-foreground": "oklch(0.16 0.02 165)",
+    warning: "oklch(0.75 0.15 80)",
+    "warning-foreground": "oklch(0.16 0.02 80)",
     border: "oklch(1 0 0 / 10%)",
     input: "oklch(1 0 0 / 15%)",
     ring: "oklch(0.68 0.11 152)",

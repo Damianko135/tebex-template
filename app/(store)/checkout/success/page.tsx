@@ -8,15 +8,19 @@ import { getCurrentBasket } from "@/lib/store/basket";
 export const dynamic = "force-dynamic";
 
 export default async function CheckoutSuccessPage() {
-  const basket = await getCurrentBasket();
+  // Payment has already succeeded by the time this page renders - if the
+  // basket refetch itself fails, this deliberately still shows the "Thank
+  // you" confirmation and just omits the order summary below, rather than
+  // surfacing an error on what should be a reassuring, low-anxiety moment.
+  const basketResult = await getCurrentBasket();
+  const basket = basketResult.ok ? basketResult.data : null;
 
   return (
     <div className="mx-auto max-w-xl px-4 py-24 text-center">
-      <CheckCircle2 className="mx-auto size-14 text-emerald-500" />
-      <h1 className="mt-6 font-heading text-3xl tracking-tight">Thank you for your purchase!</h1>
+      <CheckCircle2 className="mx-auto size-14 text-success" />
+      <h1 className="mt-6 font-heading text-3xl tracking-tight">Thank you for your purchase.</h1>
       <p className="mt-2 text-muted-foreground">
-        Your order has been received. Purchased items are typically delivered automatically in-game
-        shortly after payment.
+        Your order has been received. Most packages deliver automatically in-game within minutes.
       </p>
 
       {basket?.packages && basket.packages.length > 0 && (

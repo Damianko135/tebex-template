@@ -107,7 +107,7 @@ export function SiteHeader({
         <form action="/search" className="ml-auto hidden max-w-xs flex-1 sm:flex">
           <div className="relative w-full">
             <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
-            <Input name="q" placeholder="Search packages…" className="h-9 pl-9" />
+            <Input name="q" placeholder="Search packages…" aria-label="Search packages" className="h-9 pl-9" />
           </div>
         </form>
 
@@ -131,23 +131,23 @@ export function SiteHeader({
               <SheetTitle>{storeName}</SheetTitle>
             </SheetHeader>
             <nav className="flex flex-col gap-1 px-4">
-              <Link href="/" className="rounded-sm px-2 py-2.5 text-sm font-medium hover:bg-muted" onClick={() => setMobileOpen(false)}>
+              <Link href="/" className="rounded-sm px-2 py-2.5 text-sm font-medium transition-colors hover:bg-muted" onClick={() => setMobileOpen(false)}>
                 Home
               </Link>
-              <Link href="/categories" className="rounded-sm px-2 py-2.5 text-sm font-medium hover:bg-muted" onClick={() => setMobileOpen(false)}>
+              <Link href="/categories" className="rounded-sm px-2 py-2.5 text-sm font-medium transition-colors hover:bg-muted" onClick={() => setMobileOpen(false)}>
                 Categories
               </Link>
-              <Link href="/packages" className="rounded-sm px-2 py-2.5 text-sm font-medium hover:bg-muted" onClick={() => setMobileOpen(false)}>
+              <Link href="/packages" className="rounded-sm px-2 py-2.5 text-sm font-medium transition-colors hover:bg-muted" onClick={() => setMobileOpen(false)}>
                 All packages
               </Link>
-              <Link href="/basket" className="rounded-sm px-2 py-2.5 text-sm font-medium hover:bg-muted" onClick={() => setMobileOpen(false)}>
+              <Link href="/basket" className="rounded-sm px-2 py-2.5 text-sm font-medium transition-colors hover:bg-muted" onClick={() => setMobileOpen(false)}>
                 Basket
               </Link>
               {pages.map((page) => (
                 <Link
                   key={page.id}
                   href={`/pages/${page.slug}`}
-                  className="rounded-sm px-2 py-2.5 text-sm font-medium hover:bg-muted"
+                  className="rounded-sm px-2 py-2.5 text-sm font-medium transition-colors hover:bg-muted"
                   onClick={() => setMobileOpen(false)}
                 >
                   {page.title}
@@ -157,7 +157,7 @@ export function SiteHeader({
             <form action="/search" className="px-4">
               <div className="relative w-full">
                 <Search className="pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground" />
-                <Input name="q" placeholder="Search packages…" className="pl-8" />
+                <Input name="q" placeholder="Search packages…" aria-label="Search packages" className="pl-8" />
               </div>
             </form>
           </SheetContent>

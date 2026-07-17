@@ -3,6 +3,14 @@
 The storefront's color theme is server-side, KV-backed, and editable from the admin dashboard
 without a rebuild — a store owner can rebrand the site by changing color values in `/admin/theme`.
 
+## One thing the theme system doesn't cover: the favicon
+
+Store name, logo, and currency are all pulled live from the Tebex webstore API, and color/radius
+are admin-editable per above — every other piece of visible branding needs no source changes to
+adopt this template for a new store. The browser tab icon is the one exception: `app/favicon.ico`
+is a static file, not generated from the store's actual logo. Replace it with your own when
+adopting this template; there's no admin setting for it.
+
 ## Storage: single global theme, KV-backed
 
 `lib/storage/storage.ts` wraps [unstorage](https://unstorage.unjs.io) with its Redis driver

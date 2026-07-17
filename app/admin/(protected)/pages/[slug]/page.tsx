@@ -4,7 +4,7 @@ import { ErrorPanel } from "@/components/error-panel";
 import { JSONViewer } from "@/components/admin/json-viewer";
 import { PageHeader } from "@/components/admin/page-header";
 import { PropertyGrid } from "@/components/admin/property-grid";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { SectionCard } from "@/components/admin/section-card";
 import { getCustomPages } from "@/lib/tebex/queries";
 
 export const dynamic = "force-dynamic";
@@ -27,7 +27,7 @@ export default async function PageDetailPage({
           ]}
           title={slug}
         />
-        <ErrorPanel error={result.error} />
+        <ErrorPanel error={result.error} audience="admin" />
       </div>
     );
   }
@@ -47,28 +47,18 @@ export default async function PageDetailPage({
         description={`/${page.slug}`}
       />
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Properties</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <PropertyGrid value={page} exclude={["content"]} columns={3} />
-        </CardContent>
-      </Card>
+      <SectionCard title="Properties">
+        <PropertyGrid value={page} exclude={["content"]} columns={3} />
+      </SectionCard>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Rendered content</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div
-            className="prose prose-sm dark:prose-invert max-w-none rounded-md border border-border p-4"
-            // Page content is authored by the store owner in the Tebex control
-            // panel (the same trust boundary as the storefront that renders it).
-            dangerouslySetInnerHTML={{ __html: page.content ?? "" }}
-          />
-        </CardContent>
-      </Card>
+      <SectionCard title="Rendered content">
+        <div
+          className="prose prose-sm dark:prose-invert max-w-none rounded-md border border-border p-4"
+          // Page content is authored by the store owner in the Tebex control
+          // panel (the same trust boundary as the storefront that renders it).
+          dangerouslySetInnerHTML={{ __html: page.content ?? "" }}
+        />
+      </SectionCard>
 
       <JSONViewer data={page} label="Raw page" />
     </div>

@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 
+import { SkipLink } from "@/components/skip-link";
 import { Separator } from "@/components/ui/separator";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 
@@ -8,14 +9,17 @@ import { AppSidebar } from "./app-sidebar";
 export function AdminShell({
   children,
   user,
+  storeName,
 }: {
   children: ReactNode;
   user: { name: string; email: string };
+  storeName?: string;
 }) {
   return (
     <SidebarProvider className="min-h-svh">
-      <AppSidebar user={user} />
-      <SidebarInset>
+      <SkipLink />
+      <AppSidebar user={user} storeName={storeName} />
+      <SidebarInset id="main-content">
         <header className="flex h-12 shrink-0 items-center gap-2 border-b border-border px-3">
           <SidebarTrigger />
           <Separator orientation="vertical" className="h-4" />

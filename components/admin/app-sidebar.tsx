@@ -28,21 +28,27 @@ function isActivePath(pathname: string, href: string): boolean {
 
 export function AppSidebar({
   user,
+  storeName,
 }: {
   user: { name: string; email: string };
+  storeName?: string;
 }) {
   const pathname = usePathname();
+  const displayName = storeName || "Store Admin";
 
   return (
     <Sidebar collapsible="offcanvas">
       <SidebarHeader>
         <div className="flex items-center gap-2 px-1 py-1">
-          <div className="flex size-7 items-center justify-center rounded-md bg-primary text-xs font-bold text-primary-foreground">
-            S
+          <div
+            className="flex size-7 shrink-0 items-center justify-center rounded-md bg-primary text-xs font-bold text-primary-foreground"
+            aria-hidden="true"
+          >
+            {displayName.charAt(0).toUpperCase()}
           </div>
-          <div>
-            <p className="text-sm font-semibold leading-tight">Store Admin</p>
-            <p className="text-xs text-muted-foreground">Headless API console</p>
+          <div className="min-w-0">
+            <p className="truncate text-sm font-semibold leading-tight">{displayName}</p>
+            <p className="text-xs text-muted-foreground">Manage your storefront</p>
           </div>
         </div>
       </SidebarHeader>

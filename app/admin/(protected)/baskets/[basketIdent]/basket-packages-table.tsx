@@ -4,6 +4,7 @@ import { useActionState } from "react";
 import { Trash2 } from "lucide-react";
 import type { components } from "tebex-headless";
 
+import { ActionFeedback } from "@/components/action-feedback";
 import { EmptyState } from "@/components/empty-state";
 import { EnumBadge } from "@/components/admin/status-badge";
 import { Button } from "@/components/ui/button";
@@ -16,7 +17,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { formatCurrency } from "@/lib/format";
+import { confirmSubmit } from "@/lib/confirm-submit";
 
 import { initialActionState } from "@/lib/action-state";
 import { removePackageAction, updateQuantityAction } from "./actions";
@@ -52,24 +55,33 @@ function PackageRow({ basketIdent, pkg, currency }: { basketIdent: string; pkg: 
             {updating ? "..." : "Set"}
           </Button>
         </form>
-        {updateState.status === "error" && (
-          <p className="mt-1 text-xs text-destructive">{updateState.message}</p>
-        )}
+        <ActionFeedback state={updateState} variant="inline" className="mt-1" />
       </TableCell>
       <TableCell>
         {pkg.in_basket?.price !== undefined ? formatCurrency(pkg.in_basket.price, currency) : "—"}
       </TableCell>
       <TableCell>
-        <form action={removeAction}>
+        <form action={removeAction} onSubmit={confirmSubmit(`Remove ${pkg.name} from this basket?`)}>
           <input type="hidden" name="basketIdent" value={basketIdent} />
           <input type="hidden" name="package_id" value={String(pkg.id)} />
-          <Button type="submit" size="icon-sm" variant="ghost" disabled={removing} aria-label={`Remove ${pkg.name}`}>
-            <Trash2 className="size-3.5 text-destructive" />
-          </Button>
+          <Tooltip>
+            <TooltipTrigger
+              render={
+                <Button
+                  type="submit"
+                  size="icon-sm"
+                  variant="ghost"
+                  disabled={removing}
+                  aria-label={`Remove ${pkg.name}`}
+                />
+              }
+            >
+              <Trash2 className="size-3.5 text-destructive" />
+            </TooltipTrigger>
+            <TooltipContent>Remove {pkg.name}</TooltipContent>
+          </Tooltip>
         </form>
-        {removeState.status === "error" && (
-          <p className="mt-1 text-xs text-destructive">{removeState.message}</p>
-        )}
+        <ActionFeedback state={removeState} variant="inline" className="mt-1" />
       </TableCell>
     </TableRow>
   );

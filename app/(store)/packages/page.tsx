@@ -1,25 +1,36 @@
+import Link from "next/link";
+
 import { PackageBrowser } from "@/components/store/package-browser";
+import { PageHeading } from "@/components/store/page-heading";
+import { StorePage } from "@/components/store/page-container";
 import { EmptyState } from "@/components/empty-state";
+import { ErrorPanel } from "@/components/error-panel";
+import { Button } from "@/components/ui/button";
 import { getAllPackages } from "@/lib/tebex/queries";
 
 export const dynamic = "force-dynamic";
 
 export default async function PackagesPage() {
   const result = await getAllPackages();
-  const packages = result.ok ? (result.data.data ?? []) : [];
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
-      <div className="mb-8 space-y-1">
-        <h1 className="font-heading text-3xl tracking-tight">All packages</h1>
-        <p className="text-muted-foreground">Everything available in the store, in one place.</p>
-      </div>
+    <StorePage>
+      <PageHeading title="All packages" description="Everything available in the store, in one place." />
 
-      {packages.length === 0 ? (
+      {!result.ok ? (
+        <ErrorPanel
+          error={result.error}
+          action={
+            <Button size="sm" variant="outline" render={<Link href="/packages" />}>
+              Try again
+            </Button>
+          }
+        />
+      ) : (result.data.data ?? []).length === 0 ? (
         <EmptyState title="No packages available" description="Check back soon." />
       ) : (
-        <PackageBrowser packages={packages} />
+        <PackageBrowser packages={result.data.data ?? []} />
       )}
-    </div>
+    </StorePage>
   );
 }

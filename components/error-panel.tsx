@@ -1,6 +1,7 @@
+import type { ReactNode } from "react";
 import { AlertTriangle, PlugZap } from "lucide-react";
 
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Alert, AlertAction, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 interface DisplayableError {
   message: string;
@@ -9,7 +10,25 @@ interface DisplayableError {
   detail?: string;
 }
 
-export function ErrorPanel({ error, title }: { error: DisplayableError; title?: string }) {
+export function ErrorPanel({
+  error,
+  title,
+  audience = "customer",
+  action,
+}: {
+  error: DisplayableError;
+  title?: string;
+  /** "customer" (default) keeps the API's raw message/detail out of the
+   * primary line - it's meant for developers reading logs, not a shopper
+   * mid-purchase. "admin" surfaces it up front instead: an operator
+   * diagnosing a live integration issue needs the exact API response, not a
+   * friendly paraphrase. */
+  audience?: "customer" | "admin";
+  /** Optional retry affordance (e.g. a "Try again" link back to the same
+   * page) - these are server-rendered pages, so there's otherwise no
+   * recourse besides a manual browser refresh. */
+  action?: ReactNode;
+}) {
   const isNotConfigured = error.name === "TebexNotConfiguredError";
 
   if (isNotConfigured) {
@@ -26,15 +45,30 @@ export function ErrorPanel({ error, title }: { error: DisplayableError; title?: 
     );
   }
 
+  const reference = [error.status && `HTTP ${error.status}`, error.detail ?? error.message]
+    .filter(Boolean)
+    .join(" — ");
+
+  if (audience === "admin") {
+    return (
+      <Alert variant="destructive">
+        <AlertTriangle />
+        <AlertTitle>{title ?? "Something went wrong"}</AlertTitle>
+        <AlertDescription>{reference}</AlertDescription>
+        {action && <AlertAction>{action}</AlertAction>}
+      </Alert>
+    );
+  }
+
   return (
     <Alert variant="destructive">
       <AlertTriangle />
       <AlertTitle>{title ?? "Something went wrong"}</AlertTitle>
       <AlertDescription>
-        {error.message}
-        {error.status && ` (HTTP ${error.status})`}
-        {error.detail && error.detail !== error.message ? ` — ${error.detail}` : ""}
+        <p>We couldn&apos;t complete this request. Please try again in a moment.</p>
+        {reference && <p className="mt-1 text-xs opacity-70">Reference: {reference}</p>}
       </AlertDescription>
+      {action && <AlertAction>{action}</AlertAction>}
     </Alert>
   );
 }

@@ -1,21 +1,15 @@
-import type { CSSProperties } from "react";
 import type { components } from "tebex-headless";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { formatCurrency, formatNumber } from "@/lib/format";
+import { PROGRESS_STRIPE_STYLE } from "@/lib/ui/progress-stripe";
 
 interface ModuleEnvelope {
   id?: number;
   type?: string;
   data?: unknown;
 }
-
-const STRIPE_STYLE: CSSProperties = {
-  backgroundImage:
-    "linear-gradient(45deg, rgba(255,255,255,.15) 25%, transparent 25%, transparent 50%, rgba(255,255,255,.15) 50%, rgba(255,255,255,.15) 75%, transparent 75%, transparent)",
-  backgroundSize: "1rem 1rem",
-};
 
 /** Public-facing renderer for `/sidebar` modules. Unlike the admin version,
  * this silently omits anything it doesn't recognize instead of surfacing
@@ -85,12 +79,12 @@ export function StoreSidebarModule({ module }: { module: ModuleEnvelope }) {
               <span
                 className={
                   data.online
-                    ? "flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400"
+                    ? "flex items-center gap-1.5 text-success"
                     : "text-muted-foreground"
                 }
               >
                 <span
-                  className={`size-1.5 rounded-full ${data.online ? "bg-emerald-500" : "bg-muted-foreground"}`}
+                  className={`size-1.5 rounded-full ${data.online ? "bg-success" : "bg-muted-foreground"}`}
                 />
                 {data.online ? "Online" : "Offline"}
               </span>
@@ -115,7 +109,7 @@ export function StoreSidebarModule({ module }: { module: ModuleEnvelope }) {
           <CardContent className="space-y-2">
             <Progress
               value={data.percentage}
-              indicatorStyle={data.bar_animated ? STRIPE_STYLE : undefined}
+              indicatorStyle={data.bar_animated ? PROGRESS_STRIPE_STYLE : undefined}
             />
             <p className="text-xs text-muted-foreground">
               {data.total != null && data.target != null
@@ -137,7 +131,7 @@ export function StoreSidebarModule({ module }: { module: ModuleEnvelope }) {
           <CardContent className="space-y-2">
             <Progress
               value={data.percentage}
-              indicatorStyle={data.bar_animated ? STRIPE_STYLE : undefined}
+              indicatorStyle={data.bar_animated ? PROGRESS_STRIPE_STYLE : undefined}
             />
             <p className="text-xs text-muted-foreground">
               {data.total_payments != null && data.target != null

@@ -28,7 +28,7 @@ export function PackageCard({
         {pkg.image ? (
           <Image
             src={pkg.image}
-            alt={pkg.name ?? ""}
+            alt={pkg.name ?? "Package image"}
             fill
             unoptimized
             className="object-cover transition-transform duration-300 ease-out group-hover:scale-105"
@@ -44,7 +44,7 @@ export function PackageCard({
           </Badge>
         )}
         {hasDiscount && (
-          <Badge className="absolute top-2 right-2 border-transparent bg-destructive text-white">
+          <Badge className="absolute top-2 right-2 border-transparent bg-destructive text-destructive-foreground">
             Sale
           </Badge>
         )}
@@ -54,7 +54,7 @@ export function PackageCard({
       <CardContent className="flex flex-1 flex-col gap-2 py-4 @sm/pcard:gap-2.5 @sm/pcard:py-5">
         <Link
           href={`/packages/${pkg.id}`}
-          className="font-heading leading-snug hover:text-primary @sm/pcard:text-lg"
+          className="font-heading leading-snug transition-colors hover:text-primary @sm/pcard:text-lg"
         >
           {pkg.name}
         </Link>
@@ -63,10 +63,14 @@ export function PackageCard({
         )}
         <div className="mt-auto flex items-baseline gap-2 pt-1">
           {pkg.total_price !== undefined && (
-            <span className="text-lg font-medium">{formatCurrency(pkg.total_price, pkg.currency)}</span>
+            <span className="text-lg font-medium">
+              {hasDiscount && <span className="sr-only">Sale price: </span>}
+              {formatCurrency(pkg.total_price, pkg.currency)}
+            </span>
           )}
           {hasDiscount && pkg.base_price !== undefined && (
             <span className="text-sm text-muted-foreground line-through">
+              <span className="sr-only">Original price: </span>
               {formatCurrency(pkg.base_price, pkg.currency)}
             </span>
           )}
