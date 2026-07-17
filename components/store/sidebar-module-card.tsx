@@ -53,8 +53,11 @@ export function StoreSidebarModule({ module }: { module: ModuleEnvelope }) {
           </CardHeader>
           <CardContent>
             <ul className="space-y-2 text-sm">
-              {data.payments.slice(0, 5).map((payment, index) => (
-                <li key={index} className="flex items-center justify-between gap-2">
+              {data.payments.slice(0, 5).map((payment) => (
+                <li
+                  key={payment.created_at ? `${payment.username_id}-${payment.created_at}` : payment.username_id}
+                  className="flex items-center justify-between gap-2"
+                >
                   <span className="truncate">
                     <span className="font-medium">{payment.username}</span>{" "}
                     <span className="text-muted-foreground">bought {payment.package.name}</span>

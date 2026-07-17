@@ -14,8 +14,7 @@ export default async function PageDetailPage({
 }: {
   params: Promise<{ slug: string }>;
 }) {
-  const { slug } = await params;
-  const result = await getCustomPages();
+  const [{ slug }, result] = await Promise.all([params, getCustomPages()]);
 
   if (!result.ok) {
     return (

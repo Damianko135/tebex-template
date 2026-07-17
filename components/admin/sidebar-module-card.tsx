@@ -83,8 +83,11 @@ export function SidebarModuleCard({ module }: { module: ModuleEnvelope }) {
       return (
         <ModuleShell header={data.header} typeLabel="Recent payments">
           <ul className="space-y-1.5 text-sm">
-            {data.payments.map((payment, index) => (
-              <li key={index} className="flex items-center justify-between gap-2">
+            {data.payments.map((payment) => (
+              <li
+                key={payment.created_at ? `${payment.username_id}-${payment.created_at}` : payment.username_id}
+                className="flex items-center justify-between gap-2"
+              >
                 <span>
                   <span className="font-medium">{payment.username}</span>{" "}
                   <span className="text-muted-foreground">bought {payment.package.name}</span>

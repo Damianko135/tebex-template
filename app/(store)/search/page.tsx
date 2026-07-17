@@ -9,8 +9,7 @@ export default async function SearchPage({
 }: {
   searchParams: Promise<{ q?: string }>;
 }) {
-  const { q } = await searchParams;
-  const result = await getAllPackages();
+  const [{ q }, result] = await Promise.all([searchParams, getAllPackages()]);
   const packages = result.ok ? (result.data.data ?? []) : [];
 
   return (

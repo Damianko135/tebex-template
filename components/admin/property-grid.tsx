@@ -82,9 +82,9 @@ function PropertyValue({ value }: { value: unknown }) {
     if (isPrimitiveArray) {
       return (
         <div className="flex flex-wrap gap-1">
-          {value.map((item, index) => (
+          {value.map((item) => (
             <span
-              key={index}
+              key={String(item)}
               className="rounded-md border border-border bg-muted px-1.5 py-0.5 text-xs"
             >
               <PropertyValue value={item} />
@@ -96,7 +96,10 @@ function PropertyValue({ value }: { value: unknown }) {
     return (
       <div className="space-y-2">
         {value.map((item, index) => (
-          <div key={index} className="rounded-md border border-border p-2">
+          <div
+            key={item !== null && typeof item === "object" ? JSON.stringify(item) : `${index}-${String(item)}`}
+            className="rounded-md border border-border p-2"
+          >
             {item !== null && typeof item === "object" ? (
               <PropertyGrid value={item as Record<string, unknown>} columns={1} />
             ) : (
