@@ -1,16 +1,34 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
+import { stripHtml } from "@/lib/format";
 import { getCustomPages } from "@/lib/tebex/queries";
 
 export const dynamic = "force-dynamic";
 
-export default async function CMSPage({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params;
-  const result = await getCustomPages();
-  if (!result.ok) notFound();
+type CMSPageProps = { params: Promise<{ slug: string }> };
 
+async function findVisiblePage(slug: string) {
+  const result = await getCustomPages();
+  if (!result.ok) return undefined;
   const page = result.data.data?.find((candidate) => candidate.slug === slug);
-  if (!page || page.hidden || page.disabled) notFound();
+  return page && !page.hidden && !page.disabled ? page : undefined;
+}
+
+export async function generateMetadata({ params }: CMSPageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const page = await findVisiblePage(slug);
+  if (!page) return {};
+  return {
+    title: page.title,
+    description: page.content ? stripHtml(page.content).slice(0, 160) : undefined,
+  };
+}
+
+export default async function CMSPage({ params }: CMSPageProps) {
+  const { slug } = await params;
+  const page = await findVisiblePage(slug);
+  if (!page) notFound();
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6">

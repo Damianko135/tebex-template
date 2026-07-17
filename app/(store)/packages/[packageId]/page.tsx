@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -5,16 +6,26 @@ import { ChevronRight, ImageOff, Users } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { AddToBasketForm } from "@/components/store/add-to-basket-form";
-import { formatCurrency, formatDate } from "@/lib/format";
+import { formatCurrency, formatDate, stripHtml } from "@/lib/format";
 import { getPackage } from "@/lib/tebex/queries";
 
 export const dynamic = "force-dynamic";
 
-export default async function PackageDetailPage({
-  params,
-}: {
-  params: Promise<{ packageId: string }>;
-}) {
+type PackagePageProps = { params: Promise<{ packageId: string }> };
+
+export async function generateMetadata({ params }: PackagePageProps): Promise<Metadata> {
+  const { packageId } = await params;
+  const result = await getPackage(packageId);
+  const pkg = result.ok ? result.data.data?.[0] : undefined;
+  if (!pkg) return {};
+  return {
+    title: pkg.name,
+    description: pkg.description ? stripHtml(pkg.description).slice(0, 160) : undefined,
+    openGraph: pkg.image ? { images: [pkg.image] } : undefined,
+  };
+}
+
+export default async function PackageDetailPage({ params }: PackagePageProps) {
   const { packageId } = await params;
   const result = await getPackage(packageId);
   if (!result.ok) notFound();

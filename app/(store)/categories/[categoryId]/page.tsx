@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ChevronRight } from "lucide-react";
@@ -5,15 +6,25 @@ import { ChevronRight } from "lucide-react";
 import { PackageCard } from "@/components/store/package-card";
 import { CategoryCard } from "@/components/store/category-card";
 import { EmptyState } from "@/components/empty-state";
+import { stripHtml } from "@/lib/format";
 import { getCategoriesWithPackages, getCategory } from "@/lib/tebex/queries";
 
 export const dynamic = "force-dynamic";
 
-export default async function CategoryDetailPage({
-  params,
-}: {
-  params: Promise<{ categoryId: string }>;
-}) {
+type CategoryPageProps = { params: Promise<{ categoryId: string }> };
+
+export async function generateMetadata({ params }: CategoryPageProps): Promise<Metadata> {
+  const { categoryId } = await params;
+  const result = await getCategory(categoryId);
+  const category = result.ok ? result.data.data?.[0] : undefined;
+  if (!category) return {};
+  return {
+    title: category.name,
+    description: category.description ? stripHtml(category.description).slice(0, 160) : undefined,
+  };
+}
+
+export default async function CategoryDetailPage({ params }: CategoryPageProps) {
   const { categoryId } = await params;
   const [result, allResult] = await Promise.all([getCategory(categoryId), getCategoriesWithPackages()]);
 

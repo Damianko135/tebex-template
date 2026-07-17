@@ -3,6 +3,7 @@ import { ShoppingCart } from "lucide-react";
 
 import { BasketDiscounts } from "@/components/store/basket-discounts";
 import { BasketPackages } from "@/components/store/basket-packages";
+import { CheckoutLink } from "@/components/store/checkout-link";
 import { EmptyState } from "@/components/empty-state";
 import { Button } from "@/components/ui/button";
 import { formatCurrency } from "@/lib/format";
@@ -60,14 +61,12 @@ export default async function BasketPage() {
             </div>
           </dl>
           {basket.links?.checkout ? (
-            <Button size="lg" className="w-full" render={<a href={basket.links.checkout} />}>
-              Proceed to checkout
-            </Button>
+            <CheckoutLink href={basket.links.checkout} basketIdent={basket.ident ?? ""} />
           ) : (
             <p className="text-sm text-muted-foreground">Checkout is not available for this basket.</p>
           )}
           <p className="text-center text-xs text-muted-foreground">
-            Secure checkout is hosted by Tebex.
+            Secure checkout by Tebex.
           </p>
         </div>
       </div>

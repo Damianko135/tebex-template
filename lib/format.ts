@@ -30,6 +30,14 @@ export function looksLikeUrl(value: string): boolean {
   return /^https?:\/\//i.test(value);
 }
 
+/** Strips HTML tags from a Tebex-authored description for use as a plain-text
+ * `<meta name="description">` value - those fields are rendered as HTML
+ * elsewhere (see the `dangerouslySetInnerHTML` usages across app/(store)/),
+ * but metadata content must be plain text. */
+export function stripHtml(html: string): string {
+  return html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+}
+
 export function humanizeKey(key: string): string {
   return key
     .replace(/[_-]+/g, " ")
