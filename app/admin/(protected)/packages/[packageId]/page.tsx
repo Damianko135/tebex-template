@@ -37,7 +37,7 @@ export default async function PackageDetailPage({
     );
   }
 
-  const pkg = result.data.data?.[0];
+  const pkg = result.data;
   if (!pkg) notFound();
 
   return (

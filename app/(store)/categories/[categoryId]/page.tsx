@@ -6,6 +6,7 @@ import { ChevronRight } from "lucide-react";
 import { PackageCard } from "@/components/store/package-card";
 import { CategoryCard } from "@/components/store/category-card";
 import { EmptyState } from "@/components/empty-state";
+import { ErrorPanel } from "@/components/error-panel";
 import { stripHtml } from "@/lib/format";
 import { getCategoriesWithPackages, getCategory } from "@/lib/tebex/queries";
 
@@ -16,7 +17,7 @@ type CategoryPageProps = { params: Promise<{ categoryId: string }> };
 export async function generateMetadata({ params }: CategoryPageProps): Promise<Metadata> {
   const { categoryId } = await params;
   const result = await getCategory(categoryId);
-  const category = result.ok ? result.data.data?.[0] : undefined;
+  const category = result.ok ? result.data : undefined;
   if (!category) return {};
   return {
     title: category.name,
@@ -28,8 +29,14 @@ export default async function CategoryDetailPage({ params }: CategoryPageProps) 
   const { categoryId } = await params;
   const [result, allResult] = await Promise.all([getCategory(categoryId), getCategoriesWithPackages()]);
 
-  if (!result.ok) notFound();
-  const category = result.data.data?.[0];
+  if (!result.ok) {
+    return (
+      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
+        <ErrorPanel error={result.error} />
+      </div>
+    );
+  }
+  const category = result.data;
   if (!category) notFound();
 
   const allCategories = allResult.ok ? (allResult.data.data ?? []) : [];

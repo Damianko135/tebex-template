@@ -1,14 +1,20 @@
 import "server-only";
 
+import type { components } from "tebex-headless";
+
 import { getTebexClient } from "./client";
 import {
   basicAuthHeader,
   tebexNotConfigured as notConfigured,
+  unwrapSingle,
   unwrapTebexResponse as unwrap,
 } from "./result";
 import type { BasicAuthCredentials, OperationResponse, TebexResult } from "./result";
 
 export type { BasicAuthCredentials, TebexResult };
+
+type Category = components["schemas"]["Category"];
+type Package = components["schemas"]["Package"];
 
 export async function getWebstore(): Promise<TebexResult<OperationResponse<"getWebstore">>> {
   const client = getTebexClient();
@@ -36,16 +42,24 @@ export async function getCategoriesWithPackages(): Promise<
   return unwrap(client.GET("/categories?includePackages=1"));
 }
 
-export async function getCategory(
-  categoryId: string
-): Promise<TebexResult<OperationResponse<"getCategoryIncludePackages">>> {
+/**
+ * The generated `CategoryResponse` schema (shared with the list endpoints)
+ * types `data` as `Category[]`, but this single-category lookup's live
+ * response wraps one `Category` object instead - verified directly against
+ * the real API, not just the spec (see docs/tebex-integration.md). Normalized
+ * here, once, so every caller gets a plain `Category | undefined` and never
+ * needs to know about the mismatch.
+ */
+export async function getCategory(categoryId: string): Promise<TebexResult<Category | undefined>> {
   const client = getTebexClient();
   if (!client) return notConfigured();
-  return unwrap(
+  const result = await unwrap<{ data?: Category | Category[] }>(
     client.GET("/categories/{categoryId}?includePackages=1", {
       params: { path: { categoryId } },
     })
   );
+  if (!result.ok) return result;
+  return { ok: true, data: unwrapSingle(result.data.data) };
 }
 
 export async function getCategoryForBasket(
@@ -86,12 +100,16 @@ export async function getAllPackages(): Promise<TebexResult<OperationResponse<"g
   return unwrap(client.GET("/packages"));
 }
 
-export async function getPackage(
-  packageId: string
-): Promise<TebexResult<OperationResponse<"getPackage">>> {
+/** Same generated-schema/live-API mismatch as `getCategory` above, for the
+ * single-package lookup - normalized here rather than at every call site. */
+export async function getPackage(packageId: string): Promise<TebexResult<Package | undefined>> {
   const client = getTebexClient();
   if (!client) return notConfigured();
-  return unwrap(client.GET("/packages/{packageId}", { params: { path: { packageId } } }));
+  const result = await unwrap<{ data?: Package | Package[] }>(
+    client.GET("/packages/{packageId}", { params: { path: { packageId } } })
+  );
+  if (!result.ok) return result;
+  return { ok: true, data: unwrapSingle(result.data.data) };
 }
 
 export async function getPackagesForBasket(

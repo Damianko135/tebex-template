@@ -6,6 +6,7 @@ import { ChevronRight, ImageOff, Users } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { AddToBasketForm } from "@/components/store/add-to-basket-form";
+import { ErrorPanel } from "@/components/error-panel";
 import { formatCurrency, formatDate, stripHtml } from "@/lib/format";
 import { getPackage } from "@/lib/tebex/queries";
 
@@ -16,7 +17,7 @@ type PackagePageProps = { params: Promise<{ packageId: string }> };
 export async function generateMetadata({ params }: PackagePageProps): Promise<Metadata> {
   const { packageId } = await params;
   const result = await getPackage(packageId);
-  const pkg = result.ok ? result.data.data?.[0] : undefined;
+  const pkg = result.ok ? result.data : undefined;
   if (!pkg) return {};
   return {
     title: pkg.name,
@@ -28,9 +29,15 @@ export async function generateMetadata({ params }: PackagePageProps): Promise<Me
 export default async function PackageDetailPage({ params }: PackagePageProps) {
   const { packageId } = await params;
   const result = await getPackage(packageId);
-  if (!result.ok) notFound();
+  if (!result.ok) {
+    return (
+      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
+        <ErrorPanel error={result.error} />
+      </div>
+    );
+  }
 
-  const pkg = result.data.data?.[0];
+  const pkg = result.data;
   if (!pkg) notFound();
 
   const hasDiscount = Boolean(pkg.discount && pkg.discount > 0);

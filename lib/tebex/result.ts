@@ -36,6 +36,21 @@ export const tebexNotConfigured = <T>(): TebexResult<T> => ({
   error: new TebexNotConfiguredError(),
 });
 
+/**
+ * Single-resource lookups (`getCategory`, `getPackage`) reuse the same
+ * generated response schema as their list counterparts, which types `data`
+ * as an array (`Category[]`, `Package[]`) - but the live Headless API wraps
+ * a single object for these endpoints, verified directly against
+ * `GET /categories/{id}` (`{"data":{"id":...}}`, not `{"data":[{...}]}`).
+ * Callers used to do `.data?.[0]`, which is `undefined` for every real
+ * single-object response - silently treating every existing category/package
+ * as "not found". This normalizes either shape defensively, in case that
+ * ever changes upstream.
+ */
+export function unwrapSingle<T>(data: T | T[] | null | undefined): T | undefined {
+  return Array.isArray(data) ? data[0] : (data ?? undefined);
+}
+
 export interface BasicAuthCredentials {
   username: string;
   password: string;

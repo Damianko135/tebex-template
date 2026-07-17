@@ -35,7 +35,7 @@ export default async function CategoryDetailPage({
     );
   }
 
-  const category = result.data.data?.[0];
+  const category = result.data;
   if (!category) notFound();
 
   return (
