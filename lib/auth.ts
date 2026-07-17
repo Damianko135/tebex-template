@@ -17,7 +17,7 @@ import { redisAdapter } from "./auth-redis-adapter";
  * automatically and intentionally not set here.
  */
 export const auth = betterAuth({
-  appName: "Tebex Admin",
+  appName: "Store Admin",
   database: redisAdapter(),
   emailAndPassword: {
     enabled: true,

@@ -48,7 +48,7 @@ export function LoginForm() {
     <Card className="w-full max-w-sm">
       <CardHeader>
         <CardTitle>Admin sign in</CardTitle>
-        <CardDescription>Sign in to manage this Tebex storefront.</CardDescription>
+        <CardDescription>Sign in to manage your Tebex-connected storefront.</CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">

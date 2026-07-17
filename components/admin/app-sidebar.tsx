@@ -45,10 +45,10 @@ export function AppSidebar({
       <SidebarHeader>
         <div className="flex items-center gap-2 px-1 py-1">
           <div className="flex size-7 items-center justify-center rounded-md bg-primary text-xs font-bold text-primary-foreground">
-            T
+            S
           </div>
           <div>
-            <p className="text-sm font-semibold leading-tight">Tebex Admin</p>
+            <p className="text-sm font-semibold leading-tight">Store Admin</p>
             <p className="text-xs text-muted-foreground">Headless API console</p>
           </div>
         </div>

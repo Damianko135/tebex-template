@@ -20,7 +20,7 @@ export function AdminShell({
         <header className="flex h-12 shrink-0 items-center gap-2 border-b border-border px-3">
           <SidebarTrigger />
           <Separator orientation="vertical" className="h-4" />
-          <span className="text-sm font-medium text-muted-foreground">Tebex Admin</span>
+          <span className="text-sm font-medium text-muted-foreground">Store Admin</span>
         </header>
         <div className="flex-1 space-y-6 overflow-auto p-6">{children}</div>
       </SidebarInset>

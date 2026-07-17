@@ -5,7 +5,7 @@ import type { ReactNode } from "react";
 // give both a shared title template (route groups are transparent to the
 // URL but not to metadata/layout nesting).
 export const metadata: Metadata = {
-  title: { default: "Tebex Admin", template: "%s | Tebex Admin" },
+  title: { default: "Store Admin", template: "%s | Store Admin" },
   description: "Manage your Tebex-powered storefront.",
 };
 
