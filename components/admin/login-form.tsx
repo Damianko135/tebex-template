@@ -1,7 +1,6 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
-import { useRouter } from "next/navigation";
+import { useActionState } from "react";
 import { Loader2, LogIn } from "lucide-react";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -15,34 +14,11 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { authClient } from "@/lib/auth-client";
+import { initialActionState } from "@/lib/action-state";
+import { loginAction } from "@/lib/auth-actions";
 
 export function LoginForm() {
-  const router = useRouter();
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [isPending, setIsPending] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setError(null);
-    setIsPending(true);
-
-    await authClient.signIn.username(
-      { username, password, callbackURL: "/admin" },
-      {
-        onSuccess: () => {
-          router.push("/admin");
-          router.refresh();
-        },
-        onError: (ctx) => {
-          setError(ctx.error.message ?? "Invalid username or password.");
-          setIsPending(false);
-        },
-      }
-    );
-  }
+  const [state, action, isPending] = useActionState(loginAction, initialActionState);
 
   return (
     <Card className="w-full max-w-sm">
@@ -51,24 +27,16 @@ export function LoginForm() {
         <CardDescription>Sign in to manage your Tebex-connected storefront.</CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {error && (
+        <form action={action} className="space-y-4">
+          {state.status === "error" && (
             <Alert variant="destructive">
               <AlertTitle>Sign in failed</AlertTitle>
-              <AlertDescription>{error}</AlertDescription>
+              <AlertDescription>{state.message}</AlertDescription>
             </Alert>
           )}
           <div className="space-y-1.5">
             <Label htmlFor="username">Username</Label>
-            <Input
-              id="username"
-              name="username"
-              type="text"
-              autoComplete="username"
-              required
-              value={username}
-              onChange={(event) => setUsername(event.target.value)}
-            />
+            <Input id="username" name="username" type="text" autoComplete="username" required />
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="password">Password</Label>
@@ -78,8 +46,6 @@ export function LoginForm() {
               type="password"
               autoComplete="current-password"
               required
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
             />
           </div>
           <Button type="submit" className="w-full gap-1.5" disabled={isPending}>

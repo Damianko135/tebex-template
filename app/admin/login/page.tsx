@@ -3,9 +3,13 @@ import { redirect } from "next/navigation";
 
 import { LoginForm } from "@/components/admin/login-form";
 import { auth } from "@/lib/auth";
+import { getSimpleSession } from "@/lib/auth-simple";
+import { redis } from "@/lib/redis";
 
 export default async function AdminLoginPage() {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const session = redis
+    ? await auth.api.getSession({ headers: await headers() })
+    : await getSimpleSession();
   if (session) {
     redirect("/admin");
   }

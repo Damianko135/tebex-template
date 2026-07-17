@@ -12,7 +12,22 @@ is an administrator. If you're looking for customer login/order-history, that's 
 here; the Headless API's only related concept is `getBasketAuthUrl`, surfaced at
 `/account/sign-in` (`components/store/sign-in-panel.tsx`).
 
-## Admin auth: Better Auth + a Redis adapter
+## Admin auth: two modes, chosen by whether `REDIS_URL` is set
+
+Admin auth has two independent implementations, selected once per request by the same
+`redis` check `lib/storage/storage.ts`/`lib/redis.ts` already use elsewhere in this app: if
+`REDIS_URL` is set, everything goes through real Better Auth + Redis; if it's unset, a much
+simpler stateless fallback takes over. **The switch is based on whether `REDIS_URL` is
+configured, not on live Redis reachability** — if you set `REDIS_URL` to an address nothing is
+listening on, admin auth will try (and fail) to use Redis rather than silently degrading to the
+fallback. Point `REDIS_URL` at a real instance, or unset it entirely to use the fallback on
+purpose.
+
+Both modes are wired through one shared entry point, `lib/auth-actions.ts`'s `loginAction`/
+`signOutAction` — `components/admin/login-form.tsx` and the sidebar's sign-out button call these
+and never need to know which mode is active.
+
+### With `REDIS_URL`: Better Auth + a Redis adapter
 
 `lib/auth.ts` configures [Better Auth](https://better-auth.com):
 
@@ -26,34 +41,49 @@ here; the Headless API's only related concept is `getBasketAuthUrl`, surfaced at
   owner-vs-admin differentiation without a schema migration, unused today (every account is
   functionally identical).
 
-### The Redis adapter (`lib/auth-redis-adapter.ts`)
+`lib/auth-redis-adapter.ts`'s `redisAdapter()` implements Better Auth's `createAdapterFactory`
+interface directly on top of `ioredis` (`lib/redis.ts`, a separate connection from the theme
+system's — see [theming.md](./theming.md)). Each model (user, session, account, verification) is
+stored as one JSON blob per row (`betterauth:{model}:{id}`) plus a per-model Redis Set tracking
+which ids exist (`betterauth:{model}:__index__`). `where`/sort/select happen in JS after loading a
+model's rows — fine at admin-console scale (a handful of accounts/sessions), not built for high
+volume.
 
-Better Auth needs a database adapter; this app doesn't have a relational database, so
-`redisAdapter()` implements Better Auth's `createAdapterFactory` interface directly on top of
-`ioredis` (`lib/redis.ts`, a separate connection from the theme system's — see below). Each model
-(user, session, account, verification) is stored as one JSON blob per row
-(`betterauth:{model}:{id}`) plus a per-model Redis Set tracking which ids exist
-(`betterauth:{model}:__index__`). `where`/sort/select happen in JS after loading a model's rows —
-fine at admin-console scale (a handful of accounts/sessions), not built for high volume.
+**Bootstrapping the first admin:** `lib/auth-bootstrap.ts`'s `ensureInitialAdmin()` runs once at
+server startup, from `instrumentation.ts`'s `register()` (skipped when `REDIS_URL` is unset, and
+on the Edge runtime — `ioredis` is Node-only). It checks whether any user exists at all; if not,
+and `ADMIN_USERNAME`/`ADMIN_PASSWORD` are set, it creates a real Better Auth user with a securely
+hashed password via Better Auth's own internal adapter. After that first account exists, those env
+vars have no further effect on this path — see [environment-variables.md](./environment-variables.md).
 
-Falls back to an in-process `Map`-based store when `REDIS_URL` is unset, same philosophy as the
-theme system (see [theming.md](./theming.md)) — the app still runs and builds with zero external
-services configured.
+### Without `REDIS_URL`: `lib/auth-simple.ts`, a stateless fallback
 
-### Bootstrapping the first admin
+Better Auth's Redis adapter has an in-process `Map`-based fallback built in for when `REDIS_URL`
+is unset, but relying on mutable server state for admin sessions turned out to be fragile in
+practice — it doesn't reliably survive Next.js dev-mode module reloads, and building a working
+"account" out of an in-memory store is more machinery than a zero-setup demo path is worth.
+`lib/auth-simple.ts` replaces that entirely when Redis isn't configured:
 
-`lib/auth-bootstrap.ts`'s `ensureInitialAdmin()` runs once at server startup, from
-`instrumentation.ts`'s `register()` (skipped on the Edge runtime — `ioredis` is Node-only). It
-checks whether any user exists at all; if not, and `ADMIN_USERNAME`/`ADMIN_PASSWORD` are set, it
-creates a real Better Auth user with a securely hashed password via Better Auth's own internal
-adapter. After that first account exists, those env vars have no further effect — see
-[environment-variables.md](./environment-variables.md).
+- **No account, no session store.** `signInSimple(username, password)` compares directly against
+  `ADMIN_USERNAME`/`ADMIN_PASSWORD` on every sign-in — there's no user record to create or bootstrap.
+- **The "session" is a signed cookie**, not a server-side session lookup: `username.HMAC(username)`,
+  keyed by `BETTER_AUTH_SECRET` (already required for the Redis path). `getSimpleSession()`
+  recomputes the signature and rejects anything that doesn't match in constant time
+  (`crypto.timingSafeEqual`) — this still gates real write access (tiers, coupons, baskets), so it's
+  not just a cosmetic login screen even in demo mode.
+- If `ADMIN_USERNAME`/`ADMIN_PASSWORD`/`BETTER_AUTH_SECRET` aren't all set, this mode simply never
+  authenticates anyone (fails closed).
+
+The two modes' cookies are not interchangeable — a Better Auth session cookie means nothing to
+`getSimpleSession()` and vice versa. Don't flip `REDIS_URL` on and off while a session is active;
+sign in again after switching.
 
 ### The auth boundary
 
-`app/admin/(protected)/layout.tsx` checks `auth.api.getSession()` and redirects to `/admin/login`
-if there's no session. `app/admin/login/` deliberately lives **outside** the `(protected)` route
-group so the login page itself isn't gated by the auth check it exists to satisfy.
+`app/admin/(protected)/layout.tsx` and `app/admin/login/page.tsx` both check
+`redis ? auth.api.getSession(...) : getSimpleSession()` and redirect to/from `/admin/login`
+accordingly. `app/admin/login/` deliberately lives **outside** the `(protected)` route group so
+the login page itself isn't gated by the auth check it exists to satisfy.
 
 ## Storefront "auth": basket-scoped, not account-based
 

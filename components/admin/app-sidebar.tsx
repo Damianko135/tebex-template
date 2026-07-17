@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter, usePathname } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { LifeBuoy, LogOut } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -17,7 +17,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { authClient } from "@/lib/auth-client";
+import { signOutAction } from "@/lib/auth-actions";
 
 import { NAV_GROUPS } from "./nav-config";
 
@@ -32,13 +32,6 @@ export function AppSidebar({
   user: { name: string; email: string };
 }) {
   const pathname = usePathname();
-  const router = useRouter();
-
-  async function handleSignOut() {
-    await authClient.signOut();
-    router.push("/admin/login");
-    router.refresh();
-  }
 
   return (
     <Sidebar collapsible="offcanvas">
@@ -86,15 +79,11 @@ export function AppSidebar({
             <p className="truncate text-xs font-medium">{user.name}</p>
             <p className="truncate text-xs text-muted-foreground">{user.email}</p>
           </div>
-          <Button
-            variant="ghost"
-            size="icon-sm"
-            onClick={handleSignOut}
-            aria-label="Sign out"
-            title="Sign out"
-          >
-            <LogOut className="size-4" />
-          </Button>
+          <form action={signOutAction}>
+            <Button variant="ghost" size="icon-sm" type="submit" aria-label="Sign out" title="Sign out">
+              <LogOut className="size-4" />
+            </Button>
+          </form>
         </div>
         <SidebarMenu>
           <SidebarMenuItem>

@@ -1,6 +1,7 @@
 import "server-only";
 
 import { auth } from "./auth";
+import { redis } from "./redis";
 
 /**
  * Creates the very first administrator account from `ADMIN_USERNAME` /
@@ -20,8 +21,15 @@ import { auth } from "./auth";
  * Better Auth's `user` table always has an `email` column underneath. If
  * `ADMIN_EMAIL` isn't set, a placeholder is synthesized from the username;
  * it's never shown in the UI and has no effect on sign-in.
+ *
+ * Without `REDIS_URL`, admin auth goes through `lib/auth-simple.ts` instead
+ * (see docs/authentication.md) - there's no user record to create, since
+ * that path checks `ADMIN_USERNAME`/`ADMIN_PASSWORD` directly on every
+ * sign-in rather than storing an account. Nothing to bootstrap.
  */
 export async function ensureInitialAdmin(): Promise<void> {
+  if (!redis) return;
+
   const ctx = await auth.$context;
 
   // Every account in this system is an administrator (there's no separate
