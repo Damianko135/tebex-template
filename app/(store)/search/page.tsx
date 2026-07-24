@@ -1,12 +1,12 @@
 import Link from "next/link";
 
-import { PackageBrowser } from "@/components/store/package-browser";
 import { PageHeading } from "@/components/store/page-heading";
 import { StorePage } from "@/components/store/page-container";
 import { EmptyState } from "@/components/empty-state";
 import { ErrorPanel } from "@/components/error-panel";
 import { Button } from "@/components/ui/button";
 import { getAllPackages } from "@/lib/tebex/queries";
+import { PackageBrowser } from "@/themes/default/packages";
 
 export const dynamic = "force-dynamic";
 
