@@ -1,22 +1,13 @@
 "use client";
 
-import type { CSSProperties } from "react";
 import { useActionState, useState } from "react";
 import { ChevronRight } from "lucide-react";
 import { ColorPicker, ColorService, type IColor } from "react-color-palette";
 import "react-color-palette/css";
 
 import { ActionFeedback } from "@/components/action-feedback";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -28,6 +19,7 @@ import type { Theme, ThemeColors } from "@/lib/ui/tokens";
 import { initialActionState } from "@/lib/action-state";
 
 import { resetThemeAction, updateThemeAction } from "./actions";
+import { ThemePreview } from "./preview/theme-preview";
 import { THEME_TOKEN_FIELDS, THEME_TOKEN_GROUPS, type ThemeTokenField } from "./theme-fields";
 
 const THEME_FORM_ID = "theme-form";
@@ -163,112 +155,6 @@ function ModeTab({
           />
         </div>
       ))}
-    </div>
-  );
-}
-
-const PREVIEW_PRODUCTS = ["Jacket", "Sneakers", "Backpack"];
-const CHART_KEYS = ["chart-1", "chart-2", "chart-3", "chart-4", "chart-5"] as const;
-
-// Scopes the draft's CSS custom properties on this wrapper via inline style,
-// the same technique shadcn/ui and shadcn-svelte use for their own theme
-// customizers - everything inside reads var(--primary) etc. through the
-// normal cascade, so no separate document or cross-frame sync is needed.
-function ThemePreview({
-  mode,
-  radius,
-  colors,
-}: {
-  mode: "light" | "dark";
-  radius: string;
-  colors: ThemeColors;
-}) {
-  const style = {
-    ...Object.fromEntries(Object.entries(colors).map(([key, value]) => [`--${key}`, value])),
-    "--radius": radius,
-  } as CSSProperties;
-
-  return (
-    <div
-      className={cn(
-        "flex h-full flex-col gap-6 overflow-auto rounded-xl border border-border bg-background p-6 text-foreground",
-        mode === "dark" && "dark"
-      )}
-      style={style}
-    >
-      <div className="flex items-center justify-between border-b border-border pb-4">
-        <span className="text-lg font-semibold">Your Store</span>
-        <div className="flex items-center gap-4 text-sm text-muted-foreground">
-          <span>Shop</span>
-          <span>About</span>
-          <Badge>Cart - 2</Badge>
-        </div>
-      </div>
-
-      <div className="space-y-3">
-        <h1 className="text-2xl font-semibold tracking-tight">
-          New arrivals
-        </h1>
-        <p className="max-w-md text-sm text-muted-foreground">
-          Browse the latest packages added to the store.
-        </p>
-        <div className="flex flex-wrap gap-2">
-          <Button type="button">Shop now</Button>
-          <Button type="button" variant="outline">
-            Learn more
-          </Button>
-          <Button type="button" variant="ghost">
-            Wishlist
-          </Button>
-        </div>
-      </div>
-
-      <Alert>
-        <AlertTitle>Notice</AlertTitle>
-        <AlertDescription>
-          This alert style is used for callouts and announcements.
-        </AlertDescription>
-      </Alert>
-
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        {PREVIEW_PRODUCTS.map((name) => (
-          <Card key={name} size="sm">
-            <CardHeader>
-              <CardTitle>{name}</CardTitle>
-              <CardDescription>$59.00</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button type="button" size="sm" className="w-full">
-                Add to cart
-              </Button>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-
-      <div className="mt-auto flex items-center gap-3 rounded-lg bg-sidebar p-3 text-sidebar-foreground">
-        <span className="text-xs font-medium tracking-wide text-sidebar-foreground/70 uppercase">
-          Sidebar
-        </span>
-        <span className="rounded-md bg-sidebar-primary px-2 py-1 text-xs text-sidebar-primary-foreground">
-          Primary
-        </span>
-        <span className="rounded-md bg-sidebar-accent px-2 py-1 text-xs text-sidebar-accent-foreground">
-          Accent
-        </span>
-        <span className="ml-auto flex items-center gap-1.5">
-          <span className="text-xs font-medium tracking-wide text-sidebar-foreground/70 uppercase">
-            Charts
-          </span>
-          {CHART_KEYS.map((key) => (
-            <span
-              key={key}
-              className="size-4 rounded-full"
-              style={{ background: `var(--${key})` }}
-            />
-          ))}
-        </span>
-      </div>
     </div>
   );
 }
