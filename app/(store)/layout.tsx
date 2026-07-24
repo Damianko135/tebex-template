@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
-import { StorefrontShell } from "@/components/store/storefront-shell";
+import { StorefrontShell } from "@/themes/default/layout";
 import { getWebstore } from "@/lib/tebex/queries";
 import { stripHtml } from "@/lib/format";
 

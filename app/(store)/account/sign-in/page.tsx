@@ -1,4 +1,4 @@
-import { SignInPanel } from "@/components/store/sign-in-panel";
+import { SignInPanel } from "@/themes/default/shared";
 
 export default function SignInPage() {
   return (

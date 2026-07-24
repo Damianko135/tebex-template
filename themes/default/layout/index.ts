@@ -1,13 +1,15 @@
 // Theme module: layout
 //
 // Storefront chrome - header, footer, and the shell that wraps every
-// app/(store) page. Currently thin re-exports of their existing
-// implementation in components/store/*; nothing has moved yet.
+// app/(store) page. `StorefrontShell` is fully migrated out of
+// components/store/.
+//
+// `SiteHeader` and `SiteFooter` are re-exported here for convenience but
+// were NOT physically moved: they're also rendered directly by the admin
+// theme preview (app/admin/(protected)/theme/preview/storefront-preview.tsx),
+// which is out of scope for this migration. Moving them would force edits
+// to that out-of-scope call site, so they stay in components/store/ and
+// are consumed from there.
+export { StorefrontShell } from "./storefront-shell";
 export { SiteHeader } from "@/components/store/site-header";
 export { SiteFooter } from "@/components/store/site-footer";
-export { StorefrontShell } from "@/components/store/storefront-shell";
-
-// TODO(theme-migration): physically move site-header.tsx, site-footer.tsx,
-// and storefront-shell.tsx from components/store/ into this folder, then
-// update their call sites (app/(store)/layout.tsx and each other) to import
-// from "@/themes/default/layout" instead.

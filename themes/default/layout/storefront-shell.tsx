@@ -1,11 +1,10 @@
 import type { ReactNode } from "react";
 
 import { SkipLink } from "@/components/skip-link";
+import { SiteFooter } from "@/components/store/site-footer";
+import { SiteHeader } from "@/components/store/site-header";
 import { getCurrentBasket } from "@/lib/store/basket";
 import { getCategories, getCustomPages, getWebstore } from "@/lib/tebex/queries";
-
-import { SiteFooter } from "./site-footer";
-import { SiteHeader } from "./site-header";
 
 export async function StorefrontShell({ children }: { children: ReactNode }) {
   const [webstoreResult, categoriesResult, pagesResult, basketResult] = await Promise.all([
