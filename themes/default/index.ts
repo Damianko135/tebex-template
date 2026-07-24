@@ -17,4 +17,5 @@ export * as basket from "./basket";
 export * as packages from "./packages";
 export * as categories from "./categories";
 export * as homepage from "./homepage";
+export * as pages from "./pages";
 export * as shared from "./shared";
