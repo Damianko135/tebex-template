@@ -1,12 +1,14 @@
 // Theme module: homepage
 //
-// The homepage (app/(store)/page.tsx) currently inline-renders its sections
-// - hero, featured module, category grid, new arrivals, sidebar module grid
-// - as JSX in the page itself rather than composing standalone components,
-// so there is nothing to re-export yet.
-//
-// TODO(theme-migration): extract app/(store)/page.tsx's sections into
-// standalone components here (e.g. Hero, FeaturedPackage, CategoryGrid,
-// NewArrivals, ModuleGrid), then have the page compose them from
-// "@/themes/default/homepage" instead of inlining the markup.
-export {};
+// The storefront landing page, fully migrated. `Homepage` composes the
+// hero, the featured-package banner, the category grid, new arrivals, and
+// the remaining /sidebar module grid. app/(store)/page.tsx only fetches
+// data, handles the webstore-fetch error case, and renders `Homepage`.
+export { Homepage } from "./homepage";
+export { Hero } from "./hero";
+export { FeaturedPackage } from "./featured-package";
+export { CategoryGrid } from "./category-grid";
+export { NewArrivals } from "./new-arrivals";
+export { ModuleGrid } from "./module-grid";
+export { SectionHeader } from "./section-header";
+export { StoreSidebarModule } from "./sidebar-module-card";
