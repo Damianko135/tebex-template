@@ -1,13 +1,12 @@
 // Theme module: basket
 //
-// Basket-page presentation - line items, coupon/gift-card/creator-code
-// forms, and the checkout CTA. Currently thin re-exports of their existing
-// implementation in components/store/*; nothing has moved yet.
-export { BasketPackages } from "@/components/store/basket-packages";
-export { BasketDiscounts } from "@/components/store/basket-discounts";
-export { CheckoutLink } from "@/components/store/checkout-link";
-
-// TODO(theme-migration): physically move basket-packages.tsx,
-// basket-discounts.tsx, and checkout-link.tsx from components/store/ into
-// this folder, then update app/(store)/basket/page.tsx to import from
-// "@/themes/default/basket" instead.
+// Fully migrated: `BasketPage` composes the basket line items, discount
+// forms, order summary/checkout CTA, and the empty-basket state.
+// app/(store)/basket/page.tsx only fetches data, handles the error case,
+// and renders `BasketPage`.
+export { BasketPage } from "./basket-page";
+export { BasketPackages } from "./basket-packages";
+export { BasketDiscounts } from "./basket-discounts";
+export { CheckoutSummary } from "./checkout-summary";
+export { CheckoutLink } from "./checkout-link";
+export { EmptyBasket } from "./empty-basket";
