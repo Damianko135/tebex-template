@@ -21,7 +21,8 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import { EmptyState } from "@/components/empty-state";
-import { PackageCard } from "@/components/store/package-card";
+
+import { PackageCard } from "./package-card";
 
 type Package = components["schemas"]["Package"];
 

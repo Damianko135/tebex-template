@@ -1,10 +1,11 @@
 import type { components } from "tebex-headless";
 
 import { EmptyState } from "@/components/empty-state";
-import { CategoryCard } from "@/components/store/category-card";
-import { PackageCard } from "@/components/store/package-card";
 import type { getCategoriesWithPackages } from "@/lib/tebex/queries";
+import { PackageCard } from "@/themes/default/packages";
 import { StoreBreadcrumb, StorePage } from "@/themes/default/shared";
+
+import { CategoryCard } from "./category-card";
 
 type Category = components["schemas"]["Category"];
 type AllCategoriesResult = Awaited<ReturnType<typeof getCategoriesWithPackages>>;

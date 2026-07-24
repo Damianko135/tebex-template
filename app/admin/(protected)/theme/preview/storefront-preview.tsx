@@ -2,10 +2,6 @@
 
 import { BellRing } from "lucide-react";
 
-import { CategoryCard } from "@/components/store/category-card";
-import { PackageCard } from "@/components/store/package-card";
-import { SiteFooter } from "@/components/store/site-footer";
-import { SiteHeader } from "@/components/store/site-header";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -18,6 +14,14 @@ import {
   PopoverTitle,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { CategoryCard } from "@/themes/default/categories";
+// Imported from their own files, not the "@/themes/default/layout" barrel:
+// that barrel also re-exports `StorefrontShell`, a server component with
+// real (non-type-only) data-fetching imports, which would otherwise pull a
+// "next/headers"-dependent chain into this client component's bundle.
+import { SiteFooter } from "@/themes/default/layout/site-footer";
+import { SiteHeader } from "@/themes/default/layout/site-header";
+import { PackageCard } from "@/themes/default/packages";
 
 import {
   PREVIEW_CATEGORIES,

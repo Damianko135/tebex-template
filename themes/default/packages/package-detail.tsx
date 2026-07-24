@@ -2,10 +2,10 @@ import { Users } from "lucide-react";
 import type { components } from "tebex-headless";
 
 import { Badge } from "@/components/ui/badge";
-import { AddToBasketForm } from "@/components/store/add-to-basket-form";
 import { formatCurrency, formatDate } from "@/lib/format";
 import { StoreBreadcrumb, StorePage, TrustSignals } from "@/themes/default/shared";
 
+import { AddToBasketForm } from "./add-to-basket-form";
 import { PackageGallery } from "./package-gallery";
 
 type Package = components["schemas"]["Package"];

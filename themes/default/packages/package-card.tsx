@@ -50,7 +50,8 @@ export function PackageCard({
         )}
       </Link>
       {/* Padding and title size respond to the card's own rendered width
-          (auto-fill grid, see app/(store)/page.tsx), not the viewport. */}
+          (auto-fill grid, see themes/default/homepage/homepage.tsx), not
+          the viewport. */}
       <CardContent className="flex flex-1 flex-col gap-2 py-4 @sm/pcard:gap-2.5 @sm/pcard:py-5">
         <Link
           href={`/packages/${pkg.id}`}

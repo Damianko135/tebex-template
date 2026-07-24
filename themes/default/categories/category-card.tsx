@@ -38,8 +38,9 @@ export function CategoryCard({
           <Boxes className="absolute inset-0 m-auto size-10 text-muted-foreground/30" />
         )}
         {/* Text size responds to the card's own rendered width (auto-fill
-            grid, see app/(store)/page.tsx), not the viewport - a narrow
-            viewport can still produce a wide card, and vice versa. */}
+            grid, see themes/default/homepage/homepage.tsx), not the
+            viewport - a narrow viewport can still produce a wide card, and
+            vice versa. */}
         {/* Fixed black/white, not theme tokens: this is a legibility scrim
             over an arbitrary photo, not themed chrome - it needs to stay
             dark regardless of light/dark mode so the white text on top

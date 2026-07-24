@@ -4,9 +4,10 @@ import { Boxes } from "lucide-react";
 import { EmptyState } from "@/components/empty-state";
 import { ErrorPanel } from "@/components/error-panel";
 import { Button } from "@/components/ui/button";
-import { CategoryCard } from "@/components/store/category-card";
 import type { getCategoriesWithPackages } from "@/lib/tebex/queries";
 import { PageHeading, StorePage } from "@/themes/default/shared";
+
+import { CategoryCard } from "./category-card";
 
 type CategoriesResult = Awaited<ReturnType<typeof getCategoriesWithPackages>>;
 
